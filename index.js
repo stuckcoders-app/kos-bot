@@ -5,7 +5,9 @@ var app = express();
 
 
 // instruct the app to use the `bodyParser()` middleware for all routes
-app.use(bodyParser());
+app.use(bodyParser.urlencoded());
+
+app.use(bodyParser.json());
 
 var token = "CAAI8S9mStGQBAIK1SROK1uxYZA7mIv5mYcoX3ngHwYUCkriu11aRFXsoZAGb3kBAZAOhMTYFhztcBeZBFRoyyXuQZChZATj5CfELeeDZAy5NAcBkGwj01talblSb6IzozFGuIsw4mc74SKZBZBLZBjx8OR8xpduaVkivNjZA6A6dI3YNA9MQZBumsl2dAZByaH5atLQ0ZD";
 
