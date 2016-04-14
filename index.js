@@ -15,8 +15,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 function sendGenericMessage(sender,text,data) {
-    console.log(data);
-    return;
+
   messageData = {
     "attachment": {
       "type": "template",
@@ -173,7 +172,7 @@ app.post('/webhook/', function (req, res) {
               } else if (response.body.error) {
                   console.log('Error: ', response.body.error);
               }
-             button_data =  buildButton(response.data);
+             button_data =  buildButton(JSON.parse(response.body).data);
               sendGenericMessage(sender, "Kindly select your state from the list",button_data);
           });
 
