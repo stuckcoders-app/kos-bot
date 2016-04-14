@@ -124,8 +124,9 @@ app.post('/webhook/', function (req, res) {
       var postback_text = event.postback.payload;
       if (postback_text == "USER_REQUEST_SHIPPING_PRICE") {
 
-        sendTextMessage(sender, "Am on it");
         sendTextMessage(sender, "Can I have please have your state and LGA");
+        sendTextMessage(sender, "Am on it");
+
 
       }
 
