@@ -98,8 +98,12 @@ app.get('/', function(request, response) {
 });
 
 app.get('/test-mongo', function(request, response) {
-    var r = models.questions.insertDocument();
-    response.send(r);
+    var sample_data = {
+        "user_id" : 1,
+        "question_type" : "1",
+        "response" : "Lagos"
+    };
+    var r = models.questions.insertDocument(request, response, sample_data);
 });
 
 app.get('/webhook/', function (req, res) {
@@ -129,8 +133,15 @@ app.post('/webhook/', function (req, res) {
       var postback_text = event.postback.payload;
       if (postback_text == "USER_REQUEST_SHIPPING_PRICE") {
 
-        sendTextMessage(sender, "Can I have please have your state and LGA");
+        sendTextMessage(sender, "What state are you shipping from?");
         sendTextMessage(sender, "Am on it");
+
+          var sample_data = {
+              "user_id" : sender,
+              "question_type" : "STATE_QUESTION",
+              "response" : ""
+          };
+          models.questions.insertDocument(request, response, sample_data);
 
 
       }

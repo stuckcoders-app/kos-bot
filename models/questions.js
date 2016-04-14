@@ -5,20 +5,16 @@ var assert = require('assert');
 var config = require('../config');
 
 var questions = {
-    insertDocument: function() {
+    insertDocument: function(req, res, data) {
         var collection = config.get().collection('questions');
-        collection.insertOne({
-            "user_id" : 1,
-            "question_type" : "1",
-            "response" : "Lagos"
-        },
-        function(err, result) {
-            assert.equal(err, null);
-            console.log("Inserted a document into the questions collection.");
-            config.close(function(e, done){
-                return {message: "success"};
+        collection.insertOne(data,
+            function(err, result) {
+                assert.equal(err, null);
+                console.log("Inserted a document into the questions collection.");
+                config.close(function(e, done){
+                    res.status(200).send({message: "success"});
+                });
             });
-        });
     }
 };
 
