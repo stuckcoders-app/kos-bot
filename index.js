@@ -14,36 +14,26 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-
-function sendGenericMessage(sender) {
+function sendGenericMessage(sender,text) {
   messageData = {
     "attachment": {
       "type": "template",
       "payload": {
-        "template_type": "generic",
-        "elements": [{
-          "title": "First card",
-          "subtitle": "Element #1 of an hscroll",
-          "image_url": "http://messengerdemo.parseapp.com/img/rift.png",
+        "template_type": "button",
+        "text": text,
           "buttons": [{
-            "type": "web_url",
-            "url": "https://www.messenger.com/",
-            "title": "Web url"
-          }, {
-            "type": "postback",
-            "title": "Postback",
-            "payload": "Payload for first element in a generic bubble",
-          }],
-        },{
-          "title": "Second card",
-          "subtitle": "Element #2 of an hscroll",
-          "image_url": "http://messengerdemo.parseapp.com/img/gearvr.png",
-          "buttons": [{
-            "type": "postback",
-            "title": "Postback",
-            "payload": "Payload for second element in a generic bubble",
-          }],
-        }]
+              "type": "postback",
+              "title": "Alimosho",
+              "payload": "LGA_ALIMOSHO",
+
+          },
+              {
+              "type": "postback",
+              "title": "Lagos Island",
+              "payload": "LGA_ISLAND",
+          },
+          ]
+
       }
     }
   };
@@ -96,7 +86,7 @@ app.set('view engine', 'ejs');
 app.get('/', function(request, response) {
   response.render('pages/index');
 });
-var states = ["Lagos", "Abuja", "Oyo"];
+var states = ["lagos", "abuja", "oyo"];
 
 function processMessage(message,text) {
     var type = message.question_type;
@@ -105,9 +95,9 @@ function processMessage(message,text) {
             //we asked the user what his state is, so this must be an answer to that question
             //check if user's answer is valid, if valid, update db with users response and ask for LGA
 
-            if(states.indexOf(text) !== -1) {
+            if(states.indexOf(text.toLowerCase()) !== -1) {
 
-                sendTextMessage(message.user_id, "Cool, what LGA are you shipping from?");
+                sendTextMessage(message.user_id, "Cool, Kindly select your LGA from the list");
 
             } else {
                 sendTextMessage(message.user_id, "Sorry, we don't ship from "+text);
