@@ -15,6 +15,8 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 function sendGenericMessage(sender,text,data) {
+    console.log(data);
+    return;
   messageData = {
     "attachment": {
       "type": "template",
