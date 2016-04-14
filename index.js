@@ -4,12 +4,6 @@ var request = require('request');
 
 var app = express();
 
-
-
-
-/**
- * Created by oluwatobi.okusanya on 14/04/16.
- */
 //lets require/import the mongodb native drivers.
 var mongodb = require('mongodb');
 
@@ -19,6 +13,18 @@ var MongoClient = mongodb.MongoClient;
 // Connection URL. This is where your mongodb server is running.
 var url = 'mongodb://tobisanya:babapass1!@ds023540.mlab.com:23540/kos-shipping';
 
+var insertDocument = function(db, callback) {
+  db.collection('questions').insertOne( {
+      "user_id" : 1,
+      "question_type" : "1",
+      "response" : "Lagos",
+  }, function(err, result) {
+    assert.equal(err, null);
+    console.log("Inserted a document into the questions collection.");
+    callback();
+  });
+};
+
 // Use connect method to connect to the Server
 MongoClient.connect(url, function (err, db) {
   if (err) {
@@ -27,10 +33,10 @@ MongoClient.connect(url, function (err, db) {
     //HURRAY!! We are connected. :)
     console.log('Connection established to', url);
 
-    // do some work here with the database.
+    insertDocument(db, function() {
+      db.close();
+    });
 
-    //Close connection
-    db.close();
   }
 });
 
