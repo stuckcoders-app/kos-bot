@@ -134,7 +134,7 @@ function processText(text) {
 
     //check if user is replying a previous message
     //get type of last message sent to user
-    models.questions.getLastMessage(req, res, sender, text, processMessage);
+    models.questions.getLastMessage(sender, text, processMessage);
 
     //if user isn't take an action on 'blank' messages
 

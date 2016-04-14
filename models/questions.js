@@ -15,7 +15,7 @@ var questions = {
                 //res.status(200).send({message: "success" + result});
             });
     },
-    getLastMessage: function(req, res, sender, text, callback) {
+    getLastMessage: function(sender, text, callback) {
 
             var sender = parseInt(sender);
             var cursor = config.get().collection('questions').find({"user_id": sender}).sort({'time': -1}).limit(1);
@@ -28,7 +28,7 @@ var questions = {
                 } else {
                 }
             });
-            res.status(200).send({message: "success"});
+           // res.status(200).send({message: "success"});
 
     }
 };
