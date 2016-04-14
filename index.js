@@ -2,11 +2,9 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var request = require('request');
 var assert = require('assert');
-var mongodb = require('./config');
 var models = require('./models');
 var app = express();
 var token = "CAAI8S9mStGQBAIK1SROK1uxYZA7mIv5mYcoX3ngHwYUCkriu11aRFXsoZAGb3kBAZAOhMTYFhztcBeZBFRoyyXuQZChZATj5CfELeeDZAy5NAcBkGwj01talblSb6IzozFGuIsw4mc74SKZBZBLZBjx8OR8xpduaVkivNjZA6A6dI3YNA9MQZBumsl2dAZByaH5atLQ0ZD";
-var db = mongodb.mongo_connect;
 
 // instruct the app to use the `bodyParser()` middleware for all routes
 app.use(bodyParser.urlencoded({
@@ -14,9 +12,9 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-models.questions.insertDocument(db, function() {
-  db.close();
-});
+
+
+
 
 function sendGenericMessage(sender) {
   messageData = {
@@ -122,6 +120,9 @@ app.post('/webhook/', function (req, res) {
       }
 
       sendTextMessage(sender, "Text received, echo: "+ text.substring(0, 200));
+        models.questions.insertDocument(function() {
+            db.close();
+        });
     }
     else if (event.postback) {
 
