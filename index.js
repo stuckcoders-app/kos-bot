@@ -133,15 +133,15 @@ app.post('/webhook/', function (req, res) {
       var postback_text = event.postback.payload;
       if (postback_text == "USER_REQUEST_SHIPPING_PRICE") {
 
+          sendTextMessage(sender, "Am on it");
         sendTextMessage(sender, "What state are you shipping from?");
-        sendTextMessage(sender, "Am on it");
 
           var sample_data = {
               "user_id" : sender,
               "question_type" : "STATE_QUESTION",
               "response" : ""
           };
-          models.questions.insertDocument(request, response, sample_data);
+          models.questions.insertDocument(req, res, sample_data);
 
 
       }
