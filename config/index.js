@@ -19,7 +19,10 @@ var connect = function(url, done) {
 };
 
 var get = function() {
-    return state.db
+    if(state.db) {
+        return state.db
+    }
+
 };
 
 var close = function(done) {
