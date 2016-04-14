@@ -3,17 +3,16 @@ var bodyParser = require('body-parser');
 var request = require('request');
 var assert = require('assert');
 var models = require('./models');
+var config = require('./config');
 var app = express();
 var token = "CAAI8S9mStGQBAIK1SROK1uxYZA7mIv5mYcoX3ngHwYUCkriu11aRFXsoZAGb3kBAZAOhMTYFhztcBeZBFRoyyXuQZChZATj5CfELeeDZAy5NAcBkGwj01talblSb6IzozFGuIsw4mc74SKZBZBLZBjx8OR8xpduaVkivNjZA6A6dI3YNA9MQZBumsl2dAZByaH5atLQ0ZD";
+var db_url = 'mongodb://tobisanya:babapass1!@ds023540.mlab.com:23540/kos-shipping';
 
 // instruct the app to use the `bodyParser()` middleware for all routes
 app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(bodyParser.json());
-
-
-
 
 
 function sendGenericMessage(sender) {
@@ -118,10 +117,7 @@ app.post('/webhook/', function (req, res) {
         sendGenericMessage(sender);
         continue;
       }
-
-        models.questions.insertDocument(function() {
-            db.close();
-        });
+        models.questions.insertDocument();
     }
     else if (event.postback) {
 
@@ -139,8 +135,16 @@ app.post('/webhook/', function (req, res) {
   res.sendStatus(200);
 });
 
-app.listen(app.get('port'), function() {
-  console.log('Node app is running on port', app.get('port'));
-});
+
+config.connect(db_url, function(err) {
+    if (err) {
+        console.log('Unable to connect to Mongo.')
+        process.exit(1)
+    } else {
+        app.listen(app.get('port'), function() {
+            console.log('Listening on port...', app.get('port'))
+        })
+    }
+})
 
 

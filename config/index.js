@@ -2,23 +2,42 @@
  * Created by oluwatobi.okusanya on 14/04/16.
  */
 
-var url = 'mongodb://tobisanya:babapass1!@ds023540.mlab.com:23540/kos-shipping';
-var mongodb = require('mongodb').MongoClient;
+var MongoClient = require('mongodb').MongoClient;
 
-var mongo_connect = function () {
-    mongodb.connect(url, function (err, db) {
-        if (err) {
-            console.log('Unable to connect to the mongoDB server. Error:', err);
-        } else {
-            console.log('Connection established to', url);
-            return db;
+var state = {
+    db: null,
+}
 
-        }
-    });
+var connect = function(url, done) {
+    if (state.db) return done()
+
+    MongoClient.connect(url, function(err, db) {
+        if (err) return done(err)
+        state.db = db
+        done()
+    })
+};
+
+var get = function() {
+    return state.db
+};
+
+var close = function(done) {
+    if (state.db) {
+        state.db.close(function(err, result) {
+            state.db = null
+            state.mode = null
+            done(err)
+        })
+    }
 };
 
 module.exports = {
-    mongo_connect: mongo_connect
+    connect: connect,
+    get: get,
+    close:close
 };
+
+
 
 
