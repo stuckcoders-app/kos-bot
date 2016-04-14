@@ -104,9 +104,8 @@ function processMessage(message,text) {
         case 'STATE_QUESTION':
             //we asked the user what his state is, so this must be an answer to that question
             //check if user's answer is valid, if valid, update db with users response and ask for LGA
-            console.log(text);
-            console.log(states.indexOf(text));
-            if(states.indexOf(text)) {
+
+            if(states.indexOf(text) !== -1) {
 
                 sendTextMessage(message.user_id, "Cool, what LGA are you shipping from?");
 
