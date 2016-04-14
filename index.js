@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-function sendGenericMessage(sender,text) {
+function sendGenericMessage(sender,text,data) {
   messageData = {
     "attachment": {
       "type": "template",
@@ -163,7 +163,19 @@ app.post('/webhook/', function (req, res) {
       var postback_text = event.postback.payload;
       if (postback_text == "USER_REQUEST_SHIPPING_PRICE") {
 
-        sendTextMessage(sender, "What state are you shipping from?");
+        sendTextMessage(sender, "Kindly select your state from the list");
+          request({
+              url: 'http://api.mercury.ng/v3/states?per-page=100',
+              method: 'GET',
+          }, function(error, response, body) {
+              if (error) {
+                  console.log('Error fetching states: ', error);
+              } else if (response.body.error) {
+                  console.log('Error: ', response.body.error);
+              }
+              console.log(response);
+          });
+        sendGenericMessage(sender, "Kindly select your state from the list",data);
 
           var sample_data = {
               "user_id" : sender,
