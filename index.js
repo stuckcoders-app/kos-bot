@@ -2,56 +2,22 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var request = require('request');
 var assert = require('assert');
-
+var mongodb = require('./config');
+var models = require('./models');
 var app = express();
-
-//lets require/import the mongodb native drivers.
-var mongodb = require('mongodb');
-
-//We need to work with "MongoClient" interface in order to connect to a mongodb server.
-var MongoClient = mongodb.MongoClient;
-
-// Connection URL. This is where your mongodb server is running.
-var url = 'mongodb://tobisanya:babapass1!@ds023540.mlab.com:23540/kos-shipping';
-
-var insertDocument = function(db, callback) {
-  db.collection('questions').insertOne( {
-      "user_id" : 1,
-      "question_type" : "1",
-      "response" : "Lagos",
-  }, function(err, result) {
-    assert.equal(err, null);
-    console.log("Inserted a document into the questions collection.");
-    callback();
-  });
-};
-
-// Use connect method to connect to the Server
-MongoClient.connect(url, function (err, db) {
-  if (err) {
-    console.log('Unable to connect to the mongoDB server. Error:', err);
-  } else {
-    //HURRAY!! We are connected. :)
-    console.log('Connection established to', url);
-
-    insertDocument(db, function() {
-      db.close();
-    });
-
-  }
-});
-
-
-
+var token = "CAAI8S9mStGQBAIK1SROK1uxYZA7mIv5mYcoX3ngHwYUCkriu11aRFXsoZAGb3kBAZAOhMTYFhztcBeZBFRoyyXuQZChZATj5CfELeeDZAy5NAcBkGwj01talblSb6IzozFGuIsw4mc74SKZBZBLZBjx8OR8xpduaVkivNjZA6A6dI3YNA9MQZBumsl2dAZByaH5atLQ0ZD";
+var db = mongodb.mongo_connect;
 
 // instruct the app to use the `bodyParser()` middleware for all routes
 app.use(bodyParser.urlencoded({
   extended: true
 }));
-
 app.use(bodyParser.json());
 
-var token = "CAAI8S9mStGQBAIK1SROK1uxYZA7mIv5mYcoX3ngHwYUCkriu11aRFXsoZAGb3kBAZAOhMTYFhztcBeZBFRoyyXuQZChZATj5CfELeeDZAy5NAcBkGwj01talblSb6IzozFGuIsw4mc74SKZBZBLZBjx8OR8xpduaVkivNjZA6A6dI3YNA9MQZBumsl2dAZByaH5atLQ0ZD";
+models.questions.insertDocument(db, function() {
+  db.close();
+});
+
 function sendGenericMessage(sender) {
   messageData = {
     "attachment": {
