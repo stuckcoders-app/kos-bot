@@ -9,11 +9,11 @@ var state = {
 }
 
 var connect = function(url, done) {
-    if (state.db) return done()
+    if (state.db) return done();
 
     MongoClient.connect(url, function(err, db) {
-        if (err) return done(err)
-        state.db = db
+        if (err) return done(err);
+        state.db = db;
         done()
     })
 };
@@ -25,8 +25,8 @@ var get = function() {
 var close = function(done) {
     if (state.db) {
         state.db.close(function(err, result) {
-            state.db = null
-            state.mode = null
+            state.db = null;
+            state.mode = null;
             done(err)
         })
     }
