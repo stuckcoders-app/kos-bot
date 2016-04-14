@@ -96,15 +96,50 @@ app.set('view engine', 'ejs');
 app.get('/', function(request, response) {
   response.render('pages/index');
 });
+var states = ["Lagos", "Abuja", "Oyo"];
 
+function processMessage(message,text) {
+    var type = message.question_type;
+    switch(type) {
+        case 'STATE_QUESTION':
+            //we asked the user what his state is, so this must be an answer to that question
+            //check if user's answer is valid, if valid, update db with users response and ask for LGA
+            if(states.indexOf(text)) {
+
+                sendTextMessage(message.user_id, "Cool, what LGA are you shipping from?");
+
+            } else {
+                sendTextMessage(message.user_id, "Sorry, we don't ship from "+text);
+            }
+
+            break;
+        default:
+            sendTextMessage(message.user_id, "An error occured? :)");
+
+    }
+}
 app.get('/test-mongo', function(request, response) {
-    var sample_data = {
+    /*var sample_data = {
         "user_id" : 1,
         "question_type" : "1",
         "response" : "Lagos"
     };
-    var r = models.questions.insertDocument(request, response, sample_data);
+    var r = models.questions.insertDocument(request, response, sample_data);*/
+    models.questions.getLastMessage(request, response, '1040098922728530',processMessage);
+
+
 });
+
+function processText(text) {
+
+    //check if user is replying a previous message
+    //get type of last message sent to user
+    models.questions.getLastMessage(req, res, sender, text, processMessage);
+
+    //if user isn't take an action on 'blank' messages
+
+
+}
 
 app.get('/webhook/', function (req, res) {
   if (req.query['hub.verify_token'] === 'my_very_own_token') {
@@ -120,7 +155,11 @@ app.post('/webhook/', function (req, res) {
     sender = event.sender.id;
 
     if (event.message && event.message.text) {
-      text = event.message.text;
+
+        text = event.message.text;
+
+        processText(text);
+
 
       if (text === 'Generic') {
         sendGenericMessage(sender);

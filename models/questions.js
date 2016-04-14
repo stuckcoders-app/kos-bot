@@ -3,6 +3,7 @@
  */
 var assert = require('assert');
 var config = require('../config');
+
 var db = config.get();
 
 var questions = {
@@ -13,6 +14,22 @@ var questions = {
                 console.log("Inserted a document into the questions collection.");
                 //res.status(200).send({message: "success" + result});
             });
+    },
+    getLastMessage: function(req, res, sender, text, callback) {
+
+            var sender = parseInt(sender);
+            var cursor = config.get().collection('questions').find({"user_id": sender}).sort({'time': -1}).limit(1);
+
+
+            cursor.each(function (err, doc) {
+                assert.equal(err, null);
+                if (doc != null) {
+                    callback(doc,text)
+                } else {
+                }
+            });
+            res.status(200).send({message: "success"});
+
     }
 };
 
