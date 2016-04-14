@@ -137,8 +137,7 @@ app.post('/webhook/', function (req, res) {
           var sample_data = {
               "user_id" : sender,
               "question_type" : "STATE_QUESTION",
-              "response" : "",
-              "timestamp" : new Date()
+              "response" : ""
           };
           models.questions.insertDocument(req, res, sample_data);
 
