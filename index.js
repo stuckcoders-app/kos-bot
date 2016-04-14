@@ -119,6 +119,16 @@ app.post('/webhook/', function (req, res) {
 
       sendTextMessage(sender, "Text received, echo: "+ text.substring(0, 200));
     }
+    else if (event.postback) {
+
+      var postback_text = event.postback.payload;
+      if (postback_text == "USER_REQUEST_SHIPPING_PRICE") {
+
+        sendTextMessage(sender, "Am on it");
+
+      }
+
+    }
   }
   res.sendStatus(200);
 });
