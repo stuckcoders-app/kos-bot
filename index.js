@@ -98,6 +98,7 @@ function processMessage(message,text) {
             if(states.indexOf(text.toLowerCase()) !== -1) {
 
                 sendTextMessage(message.user_id, "Cool, Kindly select your LGA from the list");
+                sendGenericMessage(message.user_id, "Lgas in "+text);
 
             } else {
                 sendTextMessage(message.user_id, "Sorry, we don't ship from "+text);
