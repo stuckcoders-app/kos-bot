@@ -11,7 +11,7 @@ var questions = {
             function(err, result) {
                 assert.equal(err, null);
                 console.log("Inserted a document into the questions collection.");
-                res.status(200).send({message: "success" + result});
+                //res.status(200).send({message: "success" + result});
             });
     }
 };
