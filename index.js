@@ -21,19 +21,7 @@ function sendGenericMessage(sender,text,data) {
       "payload": {
         "template_type": "button",
         "text": text,
-          "buttons": [{
-              "type": "postback",
-              "title": "Alimosho",
-              "payload": "LGA_ALIMOSHO",
-
-          },
-              {
-              "type": "postback",
-              "title": "Lagos Island",
-              "payload": "LGA_ISLAND",
-          },
-          ]
-
+          "buttons": data
       }
     }
   };
@@ -110,16 +98,7 @@ function processMessage(message,text) {
 
     }
 }
-app.get('/test-mongo', function(request, response) {
-    /*var sample_data = {
-        "user_id" : 1,
-        "question_type" : "1",
-        "response" : "Lagos"
-    };
-    var r = models.questions.insertDocument(request, response, sample_data);*/
-    models.questions.getLastMessage(request, response, '1040098922728530',processMessage);
-
-
+app.get('/test-mongo', function(req, res) {
 });
 
 function processText(text) {
@@ -131,6 +110,25 @@ function processText(text) {
     //if user isn't take an action on 'blank' messages
 
 
+}
+
+function buildButton(data) {
+    var full_data = {
+        button: []
+    };
+
+    for(var i in data) {
+
+        var state = data[i];
+
+        full_data.button.push({
+            "type"      : 'postback',
+            "title"     : state.name,
+            "payload"   : 'LGA_'+state.id
+        });
+    }
+
+    return (full_data.button);
 }
 
 app.get('/webhook/', function (req, res) {
@@ -163,7 +161,7 @@ app.post('/webhook/', function (req, res) {
       var postback_text = event.postback.payload;
       if (postback_text == "USER_REQUEST_SHIPPING_PRICE") {
 
-        sendTextMessage(sender, "Kindly select your state from the list");
+          var button_data;
           request({
               url: 'http://api.mercury.ng/v3/states?per-page=100',
               method: 'GET',
@@ -173,9 +171,9 @@ app.post('/webhook/', function (req, res) {
               } else if (response.body.error) {
                   console.log('Error: ', response.body.error);
               }
-              console.log(response);
+             button_data =  buildButton(response.data);
+              sendGenericMessage(sender, "Kindly select your state from the list",button_data);
           });
-        sendGenericMessage(sender, "Kindly select your state from the list",data);
 
           var sample_data = {
               "user_id" : sender,
