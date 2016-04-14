@@ -97,6 +97,11 @@ app.get('/', function(request, response) {
   response.render('pages/index');
 });
 
+app.get('/test-mongo', function(request, response) {
+    var r = models.questions.insertDocument();
+    response.send(r);
+});
+
 app.get('/webhook/', function (req, res) {
   if (req.query['hub.verify_token'] === 'my_very_own_token') {
     res.send(req.query['hub.challenge']);

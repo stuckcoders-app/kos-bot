@@ -7,7 +7,6 @@ var config = require('../config');
 var questions = {
     insertDocument: function() {
         var collection = config.get().collection('questions');
-        console.log(collection);
         collection.insertOne({
             "user_id" : 1,
             "question_type" : "1",
@@ -16,9 +15,10 @@ var questions = {
         function(err, result) {
             assert.equal(err, null);
             console.log("Inserted a document into the questions collection.");
-            callback();
+            config.close(function(e, done){
+                return {message: "success"};
+            });
         });
-        config.get().close();
     }
 };
 
