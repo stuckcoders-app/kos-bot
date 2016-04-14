@@ -119,7 +119,6 @@ app.post('/webhook/', function (req, res) {
         continue;
       }
 
-      sendTextMessage(sender, "Text received, echo: "+ text.substring(0, 200));
         models.questions.insertDocument(function() {
             db.close();
         });
