@@ -15,7 +15,7 @@ var questions = {
                 //res.status(200).send({message: "success" + result});
             });
     },
-    updateDocument:function() {
+    updateDocument:function(query,data) {
         config.get().collection('questions').updateOne(query,data,
                function(err, results) {
                     console.log(results);
