@@ -105,7 +105,7 @@ function processMessage(message,text) {
                         "response" : "",
                         "timestamp" : new Date()
                     };
-                    models.questions.insertDocument(req, res, sample_data);
+                    models.questions.insertDocument(sample_data);
 
                     break;
                 }

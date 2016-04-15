@@ -7,7 +7,7 @@ var config = require('../config');
 var db = config.get();
 
 var questions = {
-    insertDocument: function(req, res, data) {
+    insertDocument: function(data) {
         config.get().collection('questions').insertOne(data,
             function(err, result) {
                 assert.equal(err, null);
