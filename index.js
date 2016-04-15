@@ -179,7 +179,7 @@ app.post('/webhook/', function (req, res) {
       var postback_text = event.postback.payload;
       if (postback_text == "USER_REQUEST_SHIPPING_PRICE") {
 
-          sendTextMessage(message.user_id, "Can I know what state you are shipping from?");
+          sendTextMessage(sender, "Can I know what state you are shipping from?");
 
           var sample_data = {
               "user_id" : sender,
