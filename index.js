@@ -4,6 +4,7 @@ var request = require('request');
 var assert = require('assert');
 var models = require('./models');
 var config = require('./config');
+var app_data = require('./data');
 var app = express();
 var token = "CAAI8S9mStGQBAIK1SROK1uxYZA7mIv5mYcoX3ngHwYUCkriu11aRFXsoZAGb3kBAZAOhMTYFhztcBeZBFRoyyXuQZChZATj5CfELeeDZAy5NAcBkGwj01talblSb6IzozFGuIsw4mc74SKZBZBLZBjx8OR8xpduaVkivNjZA6A6dI3YNA9MQZBumsl2dAZByaH5atLQ0ZD";
 var db_url = 'mongodb://tobisanya:babapass1!@ds023540.mlab.com:23540/kos-shipping';
@@ -75,7 +76,6 @@ app.set('view engine', 'ejs');
 app.get('/', function(request, response) {
   response.render('pages/index');
 });
-var states = ["lagos", "abuja", "oyo"];
 
 function processMessage(message,text) {
     var type = message.question_type;
@@ -84,12 +84,15 @@ function processMessage(message,text) {
             //we asked the user what his state is, so this must be an answer to that question
             //check if user's answer is valid, if valid, update db with users response and ask for LGA
 
-            if(states.indexOf(text.toLowerCase()) !== -1) {
-
-                sendTextMessage(message.user_id, "Cool, Kindly select your LGA from the list");
-                sendGenericMessage(message.user_id, "Lgas in "+text);
-
-            } else {
+            var found = false;
+            for(var i in app_data.states) {
+                if(text.toLowerCase() == app_data.states[i].name.toLowerCase()) {
+                    found = true;
+                    sendTextMessage(message.user_id, "Cool, what Local Government in "+ text +" are you shipping from ?");
+                    break;
+                }
+            }
+            if(!found) {
                 sendTextMessage(message.user_id, "Sorry, we don't ship from "+text);
             }
 
@@ -100,6 +103,19 @@ function processMessage(message,text) {
     }
 }
 app.get('/test-mongo', function(req, res) {
+
+    text = 'Oyo';
+var found = false;
+   for(var i in app_data.states) {
+       if(text.toLowerCase() == app_data.states[i].name.toLowerCase()) {
+           found = true;
+           sendTextMessage(1040098922728530, "Cool, what Local Government in "+ text +" are you shipping from ?");
+           break;
+       }
+   }
+    if(!found) {
+        sendTextMessage(1040098922728530, "Sorry, we don't ship from "+text);
+    }
 });
 
 function processText(text) {
@@ -118,15 +134,16 @@ function buildButton(data) {
         button: []
     };
 
+
     for(var i in data) {
-
         var state = data[i];
-
-        full_data.button.push({
-            "type"      : 'postback',
-            "title"     : state.name,
-            "payload"   : 'LGA_'+state.id
-        });
+if(i < 2) {
+    full_data.button.push({
+        "type"      : 'postback',
+        "title"     : state.name,
+        "payload"   : 'LGA_'+state.id
+    });
+}
     }
 
     return (full_data.button);
@@ -162,19 +179,7 @@ app.post('/webhook/', function (req, res) {
       var postback_text = event.postback.payload;
       if (postback_text == "USER_REQUEST_SHIPPING_PRICE") {
 
-          var button_data;
-          request({
-              url: 'http://api.mercury.ng/v3/states?per-page=100',
-              method: 'GET',
-          }, function(error, response, body) {
-              if (error) {
-                  console.log('Error fetching states: ', error);
-              } else if (response.body.error) {
-                  console.log('Error: ', response.body.error);
-              }
-             button_data =  buildButton(JSON.parse(response.body).data);
-              sendGenericMessage(sender, "Kindly select your state from the list",button_data);
-          });
+          sendTextMessage(message.user_id, "Can I know what state you are shipping from?");
 
           var sample_data = {
               "user_id" : sender,
@@ -183,8 +188,6 @@ app.post('/webhook/', function (req, res) {
               "timestamp" : new Date()
           };
           models.questions.insertDocument(req, res, sample_data);
-
-
       }
 
     }
