@@ -89,6 +89,24 @@ function processMessage(message,text) {
                 if(text.toLowerCase() == app_data.states[i].name.toLowerCase()) {
                     found = true;
                     sendTextMessage(message.user_id, "Cool, what Local Government in "+ text +" are you shipping from ?");
+
+                    //update  users last document where  question_type = state question
+                    models.questions.updateDocument({
+                        "user_id" : message.user_id,
+                        "question_type" : "STATE_QUESTION"},
+                        {
+                            $set: { "response": text },
+                        }
+                    );
+
+                    var sample_data = {
+                        "user_id" : message.user_id,
+                        "question_type" : "LGA_QUESTION",
+                        "response" : "",
+                        "timestamp" : new Date()
+                    };
+                    models.questions.insertDocument(req, res, sample_data);
+
                     break;
                 }
             }
@@ -104,18 +122,6 @@ function processMessage(message,text) {
 }
 app.get('/test-mongo', function(req, res) {
 
-    text = 'Oyo';
-var found = false;
-   for(var i in app_data.states) {
-       if(text.toLowerCase() == app_data.states[i].name.toLowerCase()) {
-           found = true;
-           sendTextMessage(1040098922728530, "Cool, what Local Government in "+ text +" are you shipping from ?");
-           break;
-       }
-   }
-    if(!found) {
-        sendTextMessage(1040098922728530, "Sorry, we don't ship from "+text);
-    }
 });
 
 function processText(text) {
