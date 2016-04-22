@@ -367,6 +367,7 @@ function processText(sender, text) {
                                                }, function(error, response, body) {
 
                                                    body = JSON.parse(response.body);
+                                                   console.log(body);
                                                    if (error) {
                                                        console.log('Error sending message: ', error);
                                                    } else if (response.body.error) {
