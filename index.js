@@ -377,11 +377,11 @@ function processText(sender, text) {
                                                        sendTextMessage(sender,"The shipping price for an item of "+weight+"(kg) between "+state_text+"("+lga_text+") and "+state_2_text+"("+lga_2_text+")"+"is =N="+body.data);
                                                    }
                                                    else if(body.message == "No price bound found"){
-                                                       sendTextMessage(sender, "Sorry, We currently don't ship items of "+weight+"(kg) between "+state_text+"("+lga_text+") and "+state_2_text+"("+lga_2_text+")");
+                                                       sendTextMessage(sender, "Sorry, We currently don't ship items of "+weight+"(kg) between "+lga_text+"("+state_text+") and "+lga_2_text+"("+state_2_text+")");
 
                                                    }
                                                    else if(body.message == "No zone mapping found for this LGA"){
-                                                       sendTextMessage(sender, "Sorry, We currently don't ship  between "+state_text+"("+lga_text+") and "+state_2_text+"("+lga_2_text+")");
+                                                       sendTextMessage(sender, "Sorry, We currently don't ship  between "+lga_text+"("+state_text+") and "+lga_2_text+"("+state_2_text+")");
 
                                                    }
                                                });
