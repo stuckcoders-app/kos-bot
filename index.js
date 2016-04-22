@@ -204,8 +204,8 @@ function processText(sender, text) {
                         sendTextMessage(sender, "Sorry, the LGA "+text+" cannot be found in "+state+" state");
                     }
                 });
-
-
+                break;
+            case 'STATE_TWO_QUESTION':
 
                 var found = false;
 
@@ -214,14 +214,14 @@ function processText(sender, text) {
                     if(text.toLowerCase() == app_data.states[i].name.toLowerCase()) {
                         found = true;
 
-                        var query = {'user_id': doc.user_id,  question_type:'STATE_QUESTION'};
+                        var query = {'user_id': doc.user_id,  question_type:'STATE_TWO_QUESTION'};
 
                         Questions.findOneAndUpdate(query, { "response": text }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
                             if (!err) {
 
                                 var sample_data = {
                                     "user_id" : doc.user_id,
-                                    "question_type" : "LGA_QUESTION",
+                                    "question_type" : "LGA_TWO_QUESTION",
                                     "response" : "",
                                     "timestamp" : new Date()
                                 };
@@ -229,7 +229,7 @@ function processText(sender, text) {
 
                                 gnr.save();
 
-                                sendTextMessage(doc.user_id, "Cool, what Local Government in "+ text +" are you shipping from ?");
+                                sendTextMessage(doc.user_id, "Cool, what Local Government in "+ text +" are you shipping to ?");
                             }
 
                         });
