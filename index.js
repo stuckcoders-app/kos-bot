@@ -89,7 +89,6 @@ app.get('/test-mongo', function(req, res) {
     });
 */
 
-    processText(1040098922728530,"Lagos");
 
 });
 
@@ -109,6 +108,104 @@ function processText(sender, text) {
             case 'STATE_QUESTION':
                 //we asked the user what his state is, so this must be an answer to that question
                 //check if user's answer is valid, if valid, update db with users response and ask for LGA
+
+                var found = false;
+
+
+                for(var i in app_data.states) {
+                    if(text.toLowerCase() == app_data.states[i].name.toLowerCase()) {
+                        found = true;
+
+                        var query = {'user_id': doc.user_id,  question_type:'STATE_QUESTION'};
+
+                        Questions.findOneAndUpdate(query, { "response": text }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
+                            if (!err) {
+
+                                var sample_data = {
+                                    "user_id" : doc.user_id,
+                                    "question_type" : "LGA_QUESTION",
+                                    "response" : "",
+                                    "timestamp" : new Date()
+                                };
+                                var gnr = new Questions(sample_data);
+
+                                gnr.save();
+
+                                sendTextMessage(doc.user_id, "Cool, what Local Government in "+ text +" are you shipping from ?");
+                            }
+
+                        });
+
+                        break;
+                    }
+                }
+                if(!found) {
+                    sendTextMessage(doc.user_id, "Sorry, we don't ship from "+text);
+                }
+
+                break;
+            case 'LGA_QUESTION':
+                //we asked the user what his lga is, so this must be an answer to that question
+                //check if user's answer is valid, if valid, update db with users response and ask for second state
+
+                //first get the state answer
+
+                var found_lga = false;
+                var query_state =  Questions.
+                    find({ user_id: sender, question_type:'STATE_QUESTION' }).
+                    limit(1).
+                    sort('-timestamp').
+                    exec();
+
+                query_state.then(function (doc) {
+
+                    var state = doc[0].response;
+
+                    dance:
+                    for(var i in app_data.states) {
+
+                        if(state.toLowerCase() == app_data.states[i].name.toLowerCase()) {
+
+                            if(app_data.states[i].lgas) {
+
+                                for(var j in app_data.states[i].lgas) {
+
+                                    if(text.toLowerCase() == app_data.states[i].lgas[j].name.toLowerCase()) {
+
+                                        found_lga = true;
+
+                                        var query = {'user_id': sender,  question_type:'LGA_QUESTION'};
+
+                                        Questions.findOneAndUpdate(query, { "response": text }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
+                                            if (!err) {
+
+                                                var sample_data = {
+                                                    "user_id" : sender,
+                                                    "question_type" : "STATE_TWO_QUESTION",
+                                                    "response" : "",
+                                                    "timestamp" : new Date()
+                                                };
+                                                var gnr = new Questions(sample_data);
+
+                                                gnr.save();
+
+                                                sendTextMessage(sender, "Nice, what state are you shipping to? ");
+                                            }
+
+                                        });
+
+                                        break dance;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if(!found_lga) {
+                        sendTextMessage(sender, "Sorry, the LGA "+text+" cannot be found in "+state+" state");
+                    }
+                });
+
+
 
                 var found = false;
 
