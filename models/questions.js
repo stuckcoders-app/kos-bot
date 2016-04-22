@@ -18,7 +18,7 @@ var questions = {
     getLastMessage: function(sender, text, callback) {
 
             var sender = parseInt(sender);
-            var cursor = config.get().collection('questions').find({"user_id": sender}).sort({'time': -1}).limit(1);
+            var cursor = config.get().collection('questions').find({"user_id": sender}).sort({'timestamp': -1}).limit(1);
 
 
             cursor.each(function (err, doc) {
