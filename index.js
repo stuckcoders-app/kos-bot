@@ -46,7 +46,6 @@ function sendGenericMessage(sender,text,data) {
 }
 
 function sendTextMessage(sender, text) {
-    console.log("ddsd");
     messageData = {
         text:text
     }
@@ -362,6 +361,7 @@ function processText(sender, text) {
                                                    qs: {from_lga:lga_from,state:state_from,lga:lga_to,client_id:3,weight:weight},
                                                    method: 'GET',
                                                }, function(error, response, body) {
+                                                   console.log(response.body);
                                                    if (error) {
                                                        console.log('Error sending message: ', error);
                                                    } else if (response.body.error) {
