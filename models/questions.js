@@ -9,6 +9,7 @@ var QuestionSchema = new mongoose.Schema({
     user_id: Number,
     question_type: String,
     response: String,
+    response_id: Number,
     timestamp: Object
 });
 

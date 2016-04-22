@@ -118,13 +118,14 @@ function processText(sender, text) {
 
                         var query = {'user_id': doc.user_id,  question_type:'STATE_QUESTION'};
 
-                        Questions.findOneAndUpdate(query, { "response": text }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
+                        Questions.findOneAndUpdate(query, { "response": text, "response_id" : app_data.states[i].id }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
                             if (!err) {
 
                                 var sample_data = {
                                     "user_id" : doc.user_id,
                                     "question_type" : "LGA_QUESTION",
                                     "response" : "",
+                                    "response_id" : "",
                                     "timestamp" : new Date()
                                 };
                                 var gnr = new Questions(sample_data);
@@ -176,13 +177,14 @@ function processText(sender, text) {
 
                                         var query = {'user_id': sender,  question_type:'LGA_QUESTION'};
 
-                                        Questions.findOneAndUpdate(query, { "response": text }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
+                                        Questions.findOneAndUpdate(query, { "response": text, "response_id" : app_data.states[i].lgas[j].id }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
                                             if (!err) {
 
                                                 var sample_data = {
                                                     "user_id" : sender,
                                                     "question_type" : "STATE_TWO_QUESTION",
                                                     "response" : "",
+                                                    "response_id" : "",
                                                     "timestamp" : new Date()
                                                 };
                                                 var gnr = new Questions(sample_data);
@@ -216,13 +218,14 @@ function processText(sender, text) {
 
                         var query = {'user_id': doc.user_id,  question_type:'STATE_TWO_QUESTION'};
 
-                        Questions.findOneAndUpdate(query, { "response": text }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
+                        Questions.findOneAndUpdate(query, { "response": text, "response_id" : app_data.states[i].id  }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
                             if (!err) {
 
                                 var sample_data = {
                                     "user_id" : doc.user_id,
                                     "question_type" : "LGA_TWO_QUESTION",
                                     "response" : "",
+                                    "response_id" : "",
                                     "timestamp" : new Date()
                                 };
                                 var gnr = new Questions(sample_data);
@@ -270,20 +273,21 @@ function processText(sender, text) {
 
                                             var query = {'user_id': sender,  question_type:'LGA_TWO_QUESTION'};
 
-                                            Questions.findOneAndUpdate(query, { "response": text }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
+                                            Questions.findOneAndUpdate(query, { "response": text, "response_id" : app_data.states[i].lgas[j].id }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
                                                 if (!err) {
 
                                                     var sample_data = {
                                                         "user_id" : sender,
                                                         "question_type" : "WEIGHT_QUESTION",
                                                         "response" : "",
+                                                        "response_id" : "",
                                                         "timestamp" : new Date()
                                                     };
                                                     var gnr = new Questions(sample_data);
 
                                                     gnr.save();
 
-                                                    sendTextMessage(sender, "You are doing great, can I know the weight (in KG) of the item you intend to ship, you can reply with 0 if you do not know and I will try to give you a quote for different weight bands");
+                                                    sendTextMessage(sender, "You are doing great! Can I know the weight (in KG) of the item you intend to ship, you can reply with 0 if you do not know and I will try to give you a quote for different weight bands");
                                                 }
 
                                             });
@@ -299,6 +303,80 @@ function processText(sender, text) {
                     }
                 });
                 break;
+            case 'WEIGHT_QUESTION':
+                //check if weight is a valid float
+                var weight = parseFloat(text);
+
+                if(isNaN(text)) {
+
+                    sendTextMessage(doc.user_id, "Please enter a valid weight");
+
+                    return;
+                }
+                //check that we have all info to fetch shipping fee,
+                var state_from, lga_from, state_to, lga_to;
+                var result_query_state =  Questions.
+                    find({ user_id: sender, question_type:'STATE_QUESTION' }).
+                    limit(1).
+                    sort('-timestamp').
+                    exec();
+
+                result_query_state.then(function (doc) {
+                    if(doc[0].response) {
+                        state_from = doc[0].response_id;
+
+                        var result_query_lga =  Questions.
+                            find({ user_id: sender, question_type:'LGA_QUESTION' }).
+                            limit(1).
+                            sort('-timestamp').
+                            exec();
+
+                        result_query_lga.then(function (doc) {
+                            if(doc[0].response) {
+                                lga_from = doc[0].response_id;
+
+                                var result_query_state_2 =  Questions.
+                                    find({ user_id: sender, question_type:'STATE_TWO_QUESTION' }).
+                                    limit(1).
+                                    sort('-timestamp').
+                                    exec();
+
+                                result_query_state_2.then(function (doc) {
+                                   if(doc[0].response) {
+                                       state_to = doc[0].response_id;
+
+                                       var result_query_lga_2 =  Questions.
+                                           find({ user_id: sender, question_type:'LGA_TWO_QUESTION' }).
+                                           limit(1).
+                                           sort('-timestamp').
+                                           exec();
+
+                                       result_query_lga_2.then(function (doc) {
+                                           if(doc[0].response) {
+                                               lga_to = doc[0].response_id;
+
+                                               console.log(state_from);
+                                               console.log(lga_from);
+                                               console.log(state_to);
+                                               console.log(lga_to);
+
+                                           }
+
+                                       });
+                                   }
+
+                                });
+                            }
+                        });
+                    }
+
+                });
+
+                //notify user that we are fetching shipping fee and fetch
+
+
+                break;
+
             default:
                 sendTextMessage(doc.user_id, "An error occured? :)");
 
@@ -308,6 +386,7 @@ function processText(sender, text) {
 }
 
 app.get('/webhook/', function (req, res) {
+
   if (req.query['hub.verify_token'] === 'my_very_own_token') {
     res.send(req.query['hub.challenge']);
   }
