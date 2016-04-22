@@ -355,11 +355,18 @@ function processText(sender, text) {
                                            if(doc[0].response) {
                                                lga_to = doc[0].response_id;
 
-                                               console.log(state_from);
-                                               console.log(lga_from);
-                                               console.log(state_to);
-                                               console.log(lga_to);
-
+                                               request({
+                                                   url: 'http://api.mercury.ng/v3/shipping-prices',
+                                                   qs: {from_lga:lga_from,state:state_from,lga:lga_to,client_id:3},
+                                                   method: 'GET',
+                                               }, function(error, response, body) {
+                                                   console.log(response)
+                                                   if (error) {
+                                                       console.log('Error sending message: ', error);
+                                                   } else if (response.body.error) {
+                                                       console.log('Error: ', response.body.error);
+                                                   }
+                                               });
                                            }
 
                                        });
