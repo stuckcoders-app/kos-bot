@@ -355,6 +355,8 @@ function processText(sender, text) {
                                            if(doc[0].response) {
                                                lga_to = doc[0].response_id;
 
+                                               sendTextMessage(sender,"Just a minute...");
+
                                                request({
                                                    url: 'http://api.mercury.ng/v3/shipping-prices',
                                                    qs: {from_lga:lga_from,state:state_from,lga:lga_to,client_id:3,weight:weight},
