@@ -91,7 +91,7 @@ function processMessage(message,text) {
                     sendTextMessage(message.user_id, "Cool, what Local Government in "+ text +" are you shipping from ?");
 
                     //update  users last document where  question_type = state question
-                    models.questions.updateDocument(
+                    models.questions.updateMessage(message.user_id,'STATE_QUESTION',
                         {
                             $set: { "response": text },
                         }
@@ -119,10 +119,11 @@ function processMessage(message,text) {
     }
 }
 app.get('/test-mongo', function(req, res) {
+    processText(1040098922728530,'Lagos');
 
 });
 
-function processText(text) {
+function processText(sender, text) {
 
     //check if user is replying a previous message
     //get type of last message sent to user
@@ -170,7 +171,7 @@ app.post('/webhook/', function (req, res) {
 
         text = event.message.text;
 
-        processText(text);
+        processText(sender, text);
 
 
       if (text === 'Generic') {
@@ -191,7 +192,7 @@ app.post('/webhook/', function (req, res) {
               "response" : "",
               "timestamp" : new Date()
           };
-          models.questions.insertDocument(req, res, sample_data);
+          models.questions.insertDocument(sample_data);
       }
 
     }

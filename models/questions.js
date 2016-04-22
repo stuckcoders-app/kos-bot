@@ -7,17 +7,13 @@ var config = require('../config');
 var db = config.get();
 
 var questions = {
-    insertDocument: function(req, res, data) {
+    insertDocument: function(data) {
         config.get().collection('questions').insertOne(data,
             function(err, result) {
                 assert.equal(err, null);
                 console.log("Inserted a document into the questions collection.");
                 //res.status(200).send({message: "success" + result});
             });
-    },
-    updateDocument:function(query,data) {
-
-
     },
     getLastMessage: function(sender, text, callback) {
 
@@ -35,7 +31,7 @@ var questions = {
            // res.status(200).send({message: "success"});
 
     },
-    updateMessage: function(sender, question_type) {
+    updateMessage: function(sender, question_type,data) {
 
             var sender = parseInt(sender);
             var cursor = config.get().collection('questions').find({"user_id": sender, "question_type":question_type}).sort({'time': -1}).limit(1);
@@ -50,7 +46,6 @@ var questions = {
                             "question_type" : question_type}
                         ,data,
                         function(err, results) {
-                            console.log(results);
                         });
 
                 } else {
