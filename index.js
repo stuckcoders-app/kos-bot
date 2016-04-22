@@ -313,7 +313,7 @@ function processText(sender, text) {
                     return;
                 }
                 //check that we have all info to fetch shipping fee,
-                var state_from, lga_from, state_to, lga_to;
+                var state_from, state_text, lga_from, lga_text,  state_to, state_2_text,  lga_to, lga_2_text;
                 var result_query_state =  Questions.
                     find({ user_id: sender, question_type:'STATE_QUESTION' }).
                     limit(1).
@@ -323,6 +323,7 @@ function processText(sender, text) {
                 result_query_state.then(function (doc) {
                     if(doc[0].response) {
                         state_from = doc[0].response_id;
+                        state_text = doc[0].response;
 
                         var result_query_lga =  Questions.
                             find({ user_id: sender, question_type:'LGA_QUESTION' }).
@@ -333,6 +334,7 @@ function processText(sender, text) {
                         result_query_lga.then(function (doc) {
                             if(doc[0].response) {
                                 lga_from = doc[0].response_id;
+                                lga_text = doc[0].response;
 
                                 var result_query_state_2 =  Questions.
                                     find({ user_id: sender, question_type:'STATE_TWO_QUESTION' }).
@@ -343,6 +345,7 @@ function processText(sender, text) {
                                 result_query_state_2.then(function (doc) {
                                    if(doc[0].response) {
                                        state_to = doc[0].response_id;
+                                       state_2_text = doc[0].response;
 
                                        var result_query_lga_2 =  Questions.
                                            find({ user_id: sender, question_type:'LGA_TWO_QUESTION' }).
@@ -353,6 +356,7 @@ function processText(sender, text) {
                                        result_query_lga_2.then(function (doc) {
                                            if(doc[0].response) {
                                                lga_to = doc[0].response_id;
+                                               lga_2_text = doc[0].response;
 
                                                sendTextMessage(sender,"Just a minute...");
 
@@ -361,17 +365,15 @@ function processText(sender, text) {
                                                    qs: {from_lga:lga_from,state:state_from,lga:lga_to,client_id:3,weight:weight},
                                                    method: 'GET',
                                                }, function(error, response, body) {
-                                                   console.log(body);
-                                                   body2 = JSON.parse(response.body);
                                                    if (error) {
                                                        console.log('Error sending message: ', error);
                                                    } else if (response.body.error) {
                                                        console.log('Error: ', response.body.error);
                                                    }
-                                                   else if(body2.data) {
+                                                   else if(body.data) {
                                                        sendTextMessage(sender,"The shipping price for an item of "+weight+"(kg) between "+state_text+"("+lga_text+") and "+state_2_text+"("+lga_2_text+")"+"is =N="+response.body.data);
                                                    }
-                                                   else if(body2.message == "No price bound found"){
+                                                   else if(body.message == "No price bound found"){
                                                        sendTextMessage(sender, "Sorry, We currently don't ship items of "+weight+"(kg) between "+state_text+"("+lga_text+") and "+state_2_text+"("+lga_2_text+")");
 
                                                    }
