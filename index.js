@@ -200,7 +200,8 @@ app.post('/webhook/', function (req, res) {
               "response" : "",
               "timestamp" : new Date()
           };
-          Questions.save(data);
+          var question = new Questions(data);
+          question.save(data);
       }
 
     }
