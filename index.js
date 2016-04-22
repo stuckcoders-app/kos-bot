@@ -360,11 +360,17 @@ function processText(sender, text) {
                                                    qs: {from_lga:lga_from,state:state_from,lga:lga_to,client_id:3,weight:weight},
                                                    method: 'GET',
                                                }, function(error, response, body) {
-                                                   console.log(response)
                                                    if (error) {
                                                        console.log('Error sending message: ', error);
                                                    } else if (response.body.error) {
                                                        console.log('Error: ', response.body.error);
+                                                   }
+                                                   else if(response.body.data) {
+                                                       sendTextMessage(sender,"The shipping price for an item of "+weight+"(kg) between "+state_text+"("+lga_text+") and "+state_2_text+"("+lga_2_text+")"+"is =N="+response.body.data);
+                                                   }
+                                                   else if(response.body.message == "No price bound found"){
+                                                       sendTextMessage(sender, "Sorry, We currently don't ship items of "+weight+"(kg) between "+state_text+"("+lga_text+") and "+state_2_text+"("+lga_2_text+")");
+
                                                    }
                                                });
                                            }
