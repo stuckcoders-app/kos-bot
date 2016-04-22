@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 var request = require('request');
 var assert = require('assert');
 var models = require('./models');
+var Questions = models.Questions;
 var config = require('./config');
 var app_data = require('./data');
 var app = express();
@@ -91,11 +92,11 @@ function processMessage(message,text) {
                     sendTextMessage(message.user_id, "Cool, what Local Government in "+ text +" are you shipping from ?");
 
                     //update  users last document where  question_type = state question
-                    models.questions.updateMessage(message.user_id,'STATE_QUESTION',
-                        {
-                            $set: { "response": text },
-                        }
-                    );
+                    var conditions = { user_id: message.user_id , question_type:'STATE_QUESTION'}
+                        , update = { $set: { "response": text }};
+
+                    Questions.update(conditions, update);
+
 
                     var sample_data = {
                         "user_id" : message.user_id,
@@ -103,8 +104,9 @@ function processMessage(message,text) {
                         "response" : "",
                         "timestamp" : new Date()
                     };
-                    models.questions.insertDocument(sample_data);
+                    var gnr = new Questions(sample_data);
 
+                    gnr.save();
                     break;
                 }
             }
@@ -119,7 +121,13 @@ function processMessage(message,text) {
     }
 }
 app.get('/test-mongo', function(req, res) {
-    processText(1040098922728530,'Lagos');
+
+    var query = {'user_id': "1111111111"};
+
+    Questions.findOneAndUpdate(query, { "response": 'fisherman' }, {upsert:true}, function(err, doc){
+        if (err) return res.send(500, { error: err });
+        return res.send("succesfully saved");
+    });
 
 });
 
@@ -186,13 +194,13 @@ app.post('/webhook/', function (req, res) {
 
           sendTextMessage(sender, "Can I know what state you are shipping from?");
 
-          var sample_data = {
+          var data = {
               "user_id" : sender,
               "question_type" : "STATE_QUESTION",
               "response" : "",
               "timestamp" : new Date()
           };
-          models.questions.insertDocument(sample_data);
+          Questions.save(data);
       }
 
     }

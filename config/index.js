@@ -3,19 +3,21 @@
  */
 
 var MongoClient = require('mongodb').MongoClient;
+var mongoose = require('mongoose');
 
 var state = {
     db: null,
 }
 
 var connect = function(url, done) {
-    if (state.db) return done();
+    mongoose.connect(url);
 
-    MongoClient.connect(url, function(err, db) {
-        if (err) return done(err);
-        state.db = db;
+    var db = mongoose.connection;
+    db.on('error', console.error.bind(console, 'connection error:'));
+    db.once('open', function() {
+        // we're connected!
         done()
-    })
+    });
 };
 
 var get = function() {
