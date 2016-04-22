@@ -16,10 +16,7 @@ var questions = {
             });
     },
     updateDocument:function(query,data) {
-        config.get().collection('questions').updateOne(query,data,
-               function(err, results) {
-                    console.log(results);
-                });
+
 
     },
     getLastMessage: function(sender, text, callback) {
@@ -37,7 +34,31 @@ var questions = {
             });
            // res.status(200).send({message: "success"});
 
-    }
+    },
+    updateMessage: function(sender, question_type) {
+
+            var sender = parseInt(sender);
+            var cursor = config.get().collection('questions').find({"user_id": sender, "question_type":question_type}).sort({'time': -1}).limit(1);
+
+            cursor.each(function (err, doc) {
+                assert.equal(err, null);
+                if (doc != null) {
+
+                    config.get().collection('questions').updateOne({
+                            "_id" : doc._id,
+                            "user_id" : sender,
+                            "question_type" : question_type}
+                        ,data,
+                        function(err, results) {
+                            console.log(results);
+                        });
+
+                } else {
+                }
+            });
+           // res.status(200).send({message: "success"});
+
+    },
 };
 
 module.exports = questions;
