@@ -238,9 +238,66 @@ function processText(sender, text) {
                     }
                 }
                 if(!found) {
-                    sendTextMessage(doc.user_id, "Sorry, we don't ship from "+text);
+                    sendTextMessage(doc.user_id, "Sorry, we don't ship to "+text);
                 }
 
+                break;
+            case 'LGA_TWO_QUESTION':
+
+                var found_lga = false;
+                var query_state =  Questions.
+                    find({ user_id: sender, question_type:'STATE_TWO_QUESTION' }).
+                    limit(1).
+                    sort('-timestamp').
+                    exec();
+
+                query_state.then(function (doc) {
+
+                    var state = doc[0].response;
+
+                    dance:
+                        for(var i in app_data.states) {
+
+                            if(state.toLowerCase() == app_data.states[i].name.toLowerCase()) {
+
+                                if(app_data.states[i].lgas) {
+
+                                    for(var j in app_data.states[i].lgas) {
+
+                                        if(text.toLowerCase() == app_data.states[i].lgas[j].name.toLowerCase()) {
+
+                                            found_lga = true;
+
+                                            var query = {'user_id': sender,  question_type:'LGA_TWO_QUESTION'};
+
+                                            Questions.findOneAndUpdate(query, { "response": text }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
+                                                if (!err) {
+
+                                                    var sample_data = {
+                                                        "user_id" : sender,
+                                                        "question_type" : "WEIGHT_QUESTION",
+                                                        "response" : "",
+                                                        "timestamp" : new Date()
+                                                    };
+                                                    var gnr = new Questions(sample_data);
+
+                                                    gnr.save();
+
+                                                    sendTextMessage(sender, "You are doing great, can I know the weight (in KG) of the item you intend to ship, you can reply with 0 if you do not know and I will try to give you a quote for different weight bands");
+                                                }
+
+                                            });
+
+                                            break dance;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    if(!found_lga) {
+                        sendTextMessage(sender, "Sorry, the LGA "+text+" cannot be found in "+state+" state");
+                    }
+                });
                 break;
             default:
                 sendTextMessage(doc.user_id, "An error occured? :)");
