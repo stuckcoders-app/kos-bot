@@ -46,24 +46,25 @@ function sendGenericMessage(sender,text,data) {
 }
 
 function sendTextMessage(sender, text) {
-  messageData = {
-    text:text
-  }
-  request({
-    url: 'https://graph.facebook.com/v2.6/me/messages',
-    qs: {access_token:token},
-    method: 'POST',
-    json: {
-      recipient: {id:sender},
-      message: messageData,
+    console.log("ddsd");
+    messageData = {
+        text:text
     }
-  }, function(error, response, body) {
-    if (error) {
-      console.log('Error sending message: ', error);
-    } else if (response.body.error) {
-      console.log('Error: ', response.body.error);
-    }
-  });
+    request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: {access_token:token},
+        method: 'POST',
+        json: {
+            recipient: {id:sender},
+            message: messageData,
+        }
+    }, function(error, response, body) {
+        if (error) {
+            console.log('Error sending message: ', error);
+        } else if (response.body.error) {
+            console.log('Error: ', response.body.error);
+        }
+    });
 }
 
 app.set('port', (process.env.PORT || 5000));
@@ -78,88 +79,78 @@ app.get('/', function(request, response) {
   response.render('pages/index');
 });
 
-function processMessage(message,text) {
-    var type = message.question_type;
-    switch(type) {
-        case 'STATE_QUESTION':
-            //we asked the user what his state is, so this must be an answer to that question
-            //check if user's answer is valid, if valid, update db with users response and ask for LGA
-
-            var found = false;
-            for(var i in app_data.states) {
-                if(text.toLowerCase() == app_data.states[i].name.toLowerCase()) {
-                    found = true;
-                    sendTextMessage(message.user_id, "Cool, what Local Government in "+ text +" are you shipping from ?");
-
-                    //update  users last document where  question_type = state question
-                    var conditions = { user_id: message.user_id , question_type:'STATE_QUESTION'}
-                        , update = { $set: { "response": text }};
-
-                    Questions.update(conditions, update);
-
-
-                    var sample_data = {
-                        "user_id" : message.user_id,
-                        "question_type" : "LGA_QUESTION",
-                        "response" : "",
-                        "timestamp" : new Date()
-                    };
-                    var gnr = new Questions(sample_data);
-
-                    gnr.save();
-                    break;
-                }
-            }
-            if(!found) {
-                sendTextMessage(message.user_id, "Sorry, we don't ship from "+text);
-            }
-
-            break;
-        default:
-            sendTextMessage(message.user_id, "An error occured? :)");
-
-    }
-}
 app.get('/test-mongo', function(req, res) {
 
-    var query = {'user_id': "1111111111"};
+    /*var query = {'user_id': "1111111111"};
 
     Questions.findOneAndUpdate(query, { "response": 'fisherman' }, {upsert:true}, function(err, doc){
         if (err) return res.send(500, { error: err });
         return res.send("succesfully saved");
     });
+*/
+
+    processText(1040098922728530,"Lagos");
 
 });
 
 function processText(sender, text) {
 
-    //check if user is replying a previous message
-    //get type of last message sent to user
-    models.questions.getLastMessage(sender, text, processMessage);
+    var query =  Questions.
+        find({ user_id: sender }).
+        limit(1).
+        sort('-timestamp').
+        exec();
 
-    //if user isn't take an action on 'blank' messages
+    query.then(function (doc) {
+
+        doc = doc[0];
+
+        switch(doc.question_type) {
+            case 'STATE_QUESTION':
+                //we asked the user what his state is, so this must be an answer to that question
+                //check if user's answer is valid, if valid, update db with users response and ask for LGA
+
+                var found = false;
 
 
-}
+                for(var i in app_data.states) {
+                    if(text.toLowerCase() == app_data.states[i].name.toLowerCase()) {
+                        found = true;
 
-function buildButton(data) {
-    var full_data = {
-        button: []
-    };
+                        var query = {'user_id': doc.user_id,  question_type:'STATE_QUESTION'};
 
+                        Questions.findOneAndUpdate(query, { "response": text }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
+                            if (!err) {
 
-    for(var i in data) {
-        var state = data[i];
-if(i < 2) {
-    full_data.button.push({
-        "type"      : 'postback',
-        "title"     : state.name,
-        "payload"   : 'LGA_'+state.id
+                                var sample_data = {
+                                    "user_id" : doc.user_id,
+                                    "question_type" : "LGA_QUESTION",
+                                    "response" : "",
+                                    "timestamp" : new Date()
+                                };
+                                var gnr = new Questions(sample_data);
+
+                                gnr.save();
+
+                                sendTextMessage(doc.user_id, "Cool, what Local Government in "+ text +" are you shipping from ?");
+                            }
+
+                        });
+
+                        break;
+                    }
+                }
+                if(!found) {
+                    sendTextMessage(doc.user_id, "Sorry, we don't ship from "+text);
+                }
+
+                break;
+            default:
+                sendTextMessage(doc.user_id, "An error occured? :)");
+
+        }
     });
-}
-    }
 
-    return (full_data.button);
 }
 
 app.get('/webhook/', function (req, res) {
@@ -181,11 +172,6 @@ app.post('/webhook/', function (req, res) {
 
         processText(sender, text);
 
-
-      if (text === 'Generic') {
-        sendGenericMessage(sender);
-        continue;
-      }
     }
     else if (event.postback) {
 
