@@ -380,6 +380,10 @@ function processText(sender, text) {
                                                        sendTextMessage(sender, "Sorry, We currently don't ship items of "+weight+"(kg) between "+state_text+"("+lga_text+") and "+state_2_text+"("+lga_2_text+")");
 
                                                    }
+                                                   else if(body.message == "No zone mapping found for this LGA"){
+                                                       sendTextMessage(sender, "Sorry, We currently don't ship  between "+state_text+"("+lga_text+") and "+state_2_text+"("+lga_2_text+")");
+
+                                                   }
                                                });
                                            }
 
