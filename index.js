@@ -287,7 +287,7 @@ function processText(sender, text) {
 
                                                     gnr.save();
 
-                                                    sendTextMessage(sender, "You are doing great! Can I know the weight (in KG) of the item you intend to ship, you can reply with 0 if you do not know and I will try to give you a quote for different weight bands");
+                                                    sendTextMessage(sender, "You are doing great! Can I know the weight (in KG) of the item you intend to ship");
                                                 }
 
                                             });
@@ -357,7 +357,7 @@ function processText(sender, text) {
 
                                                request({
                                                    url: 'http://api.mercury.ng/v3/shipping-prices',
-                                                   qs: {from_lga:lga_from,state:state_from,lga:lga_to,client_id:3},
+                                                   qs: {from_lga:lga_from,state:state_from,lga:lga_to,client_id:3,weight:weight},
                                                    method: 'GET',
                                                }, function(error, response, body) {
                                                    console.log(response)
