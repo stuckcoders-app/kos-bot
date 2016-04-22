@@ -117,7 +117,7 @@ function processText(sender, text) {
 
                         var query = {'user_id': doc.user_id,  question_type:'STATE_QUESTION'};
 
-                        Questions.findOneAndUpdate(query, { "response": text, "response_id" : app_data.states[i].id }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
+                        Questions.findOneAndUpdate(query, { "response": app_data.states[i].name, "response_id" : app_data.states[i].id }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
                             if (!err) {
 
                                 var sample_data = {
@@ -176,7 +176,7 @@ function processText(sender, text) {
 
                                         var query = {'user_id': sender,  question_type:'LGA_QUESTION'};
 
-                                        Questions.findOneAndUpdate(query, { "response": text, "response_id" : app_data.states[i].lgas[j].id }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
+                                        Questions.findOneAndUpdate(query, { "response": app_data.states[i].lgas[j].name, "response_id" : app_data.states[i].lgas[j].id }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
                                             if (!err) {
 
                                                 var sample_data = {
@@ -217,7 +217,7 @@ function processText(sender, text) {
 
                         var query = {'user_id': doc.user_id,  question_type:'STATE_TWO_QUESTION'};
 
-                        Questions.findOneAndUpdate(query, { "response": text, "response_id" : app_data.states[i].id  }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
+                        Questions.findOneAndUpdate(query, { "response": app_data.states[i].name, "response_id" : app_data.states[i].id  }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
                             if (!err) {
 
                                 var sample_data = {
@@ -272,7 +272,7 @@ function processText(sender, text) {
 
                                             var query = {'user_id': sender,  question_type:'LGA_TWO_QUESTION'};
 
-                                            Questions.findOneAndUpdate(query, { "response": text, "response_id" : app_data.states[i].lgas[j].id }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
+                                            Questions.findOneAndUpdate(query, { "response": app_data.states[i].lgas[j].name, "response_id" : app_data.states[i].lgas[j].id }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
                                                 if (!err) {
 
                                                     var sample_data = {
@@ -373,7 +373,7 @@ function processText(sender, text) {
                                                        console.log('Error: ', response.body.error);
                                                    }
                                                    else if(body.data) {
-                                                       sendTextMessage(sender,"The shipping price for an item of "+weight+"(kg) between "+state_text+"("+lga_text+") and "+state_2_text+"("+lga_2_text+")"+"is =N="+response.body.data);
+                                                       sendTextMessage(sender,"The shipping price for an item of "+weight+"(kg) between "+state_text+"("+lga_text+") and "+state_2_text+"("+lga_2_text+")"+"is =N="+body.data);
                                                    }
                                                    else if(body.message == "No price bound found"){
                                                        sendTextMessage(sender, "Sorry, We currently don't ship items of "+weight+"(kg) between "+state_text+"("+lga_text+") and "+state_2_text+"("+lga_2_text+")");
