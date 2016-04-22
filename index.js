@@ -120,16 +120,6 @@ function processMessage(message,text) {
 }
 app.get('/test-mongo', function(req, res) {
 
-    sendTextMessage(1100000111, "Can I know what state you are shipping from?");
-    return;
-
-    var sample_data = {
-        "user_id" : 1100000111,
-        "question_type" : "STATE_QUESTION",
-        "response" : "",
-        "timestamp" : new Date()
-    };
-    models.questions.insertDocument(req, res, sample_data);
 });
 
 function processText(text) {
@@ -192,7 +182,6 @@ app.post('/webhook/', function (req, res) {
 
       var postback_text = event.postback.payload;
       if (postback_text == "USER_REQUEST_SHIPPING_PRICE") {
-          console.log(sender);
 
           sendTextMessage(sender, "Can I know what state you are shipping from?");
 
