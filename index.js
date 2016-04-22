@@ -365,6 +365,8 @@ function processText(sender, text) {
                                                    qs: {from_lga:lga_from,state:state_from,lga:lga_to,client_id:3,weight:weight},
                                                    method: 'GET',
                                                }, function(error, response, body) {
+
+                                                   body = JSON.parse(response.body);
                                                    if (error) {
                                                        console.log('Error sending message: ', error);
                                                    } else if (response.body.error) {
