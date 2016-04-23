@@ -4,7 +4,6 @@
 
 var mongoose = require('mongoose');
 
-
 var connect = function(url, done) {
     mongoose.connect(url);
 
