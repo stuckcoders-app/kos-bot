@@ -104,6 +104,29 @@ function processText(sender, text) {
         doc = doc[0];
 
         switch(doc.question_type) {
+            case 'TRACK_QUESTION':
+            var postData = {
+                            "order_no": text,
+                            "domain_name": 'kos.ng/track.php'
+                            }
+
+                request({
+                    url: 'http://api.mercury.ng/UtilityNonAuth/GetTrackingDetailForOrderNumber',
+                    body:postData,
+                    method: 'POST',
+                }, function(error, response, body) {
+
+                    body = JSON.parse(response.body);
+                    console.log(body);
+                    if (error) {
+                        console.log('Error sending message: ', error);
+                    } else if (response.body.error) {
+                        console.log('Error: ', response.body.error);
+                    }
+                    sendTextMessage(sender, "You can also get more info at http://kos.ng/track.php?order_number="+text);
+                });
+
+                break;
             case 'STATE_QUESTION':
                 //we asked the user what his state is, so this must be an answer to that question
                 //check if user's answer is valid, if valid, update db with users response and ask for LGA
