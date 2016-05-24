@@ -116,7 +116,8 @@ function processText(sender, text) {
 
                 request({
                     url: 'http://api.mercury.ng/UtilityNonAuth/GetTrackingDetailForOrderNumber',
-                    body:postData,
+                    body: postData,
+                    json: true,
                     method: 'POST',
                 }, function(error, response, body) {
                     console.log(error);
