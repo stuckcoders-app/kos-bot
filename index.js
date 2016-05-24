@@ -125,8 +125,30 @@ function processText(sender, text) {
                     url: url
                 }
                 request(options, function (err, res, body) {
-                    console.log('done');
-                    console.log(body);
+                    if(body.status) {
+
+                        if(body.status == 'fail') {
+                            sendTextMessage(doc.user_id, "No tracking Information available yet for "+text);
+                        }
+                        else if (body.status == 'success') {
+                            if(body.data.tracking_info) {
+
+                                sendTextMessage(sender, body.data.tracking_info);
+
+                            } else if(body.data.packages.text) {
+                                var info = body.data.packages.text.results[0];
+                                info = info.status + " " + info.location_name;
+
+                                sendTextMessage(sender, info);
+
+
+                            }
+
+                        }
+
+                    } else {
+                        sendTextMessage(doc.user_id, "An error occured? :(");
+                    }
 
                 })
 
@@ -430,7 +452,7 @@ function processText(sender, text) {
                 break;
 
             default:
-                sendTextMessage(doc.user_id, "An error occured? :)");
+                sendTextMessage(doc.user_id, "An error occured? :(");
 
         }
     });
