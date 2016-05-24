@@ -125,6 +125,7 @@ function processText(sender, text) {
                     url: url
                 }
                 request(options, function (err, res, body) {
+                    console.log(body);
                     if(body.status) {
 
                         if(body.status == 'fail') {
