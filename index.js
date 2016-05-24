@@ -104,6 +104,7 @@ function processText(sender, text) {
         doc = doc[0];
 
         switch(doc.question_type) {
+            console.log(doc.question_type);
             case 'TRACK_QUESTION':
             var postData = {
                             "order_no": text,
@@ -449,7 +450,6 @@ app.post('/webhook/', function (req, res) {
 
     if (event.message && event.message.text) {
 
-        console.log("message");
 
         text = event.message.text;
 
