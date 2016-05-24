@@ -116,8 +116,8 @@ function processText(sender, text) {
                     value: 'test'
                 }
 
-                var url = 'https://api.mercury.ng/UtilityNonAuth/GetTrackingDetailForOrderNumber';
-                var url = 'https://www.example.com';
+                var url = 'https://api.mercury.ng';
+               // var url = 'https://www.example.com';
 
                 var options = {
                     method: 'post',
