@@ -126,21 +126,30 @@ function processText(sender, text) {
                 }
                 request(options, function (err, res, body) {
                     if(body.status) {
-                        console.log(body.data.packages[text]);
 
                         if(body.status == 'fail') {
                             sendTextMessage(doc.user_id, "No tracking Information available yet for "+text);
                         }
                         else if (body.status == 'success') {
+
+                            var data = [
+                                {
+                                    "type":"web_url",
+                                    "url":"http://kos.ng/track.php?order_number="+text,
+                                    "title":"View More Info"
+                                }
+                            ]
+
                             if(body.data.tracking_info) {
 
-                                sendTextMessage(sender, body.data.tracking_info);
+                                sendGenericMessage(sender, "Your package's current status: "+body.data.tracking_info+ " :)",data);
 
                             } else if(body.data.packages[text]) {
                                 var info = body.data.packages[text].results[0];
                                 info = info.status + " " + info.location_name;
 
-                                sendTextMessage(sender, info);
+
+                                sendGenericMessage(sender, "Your package's current status: "+info+ " :)",data);
 
 
                             }
