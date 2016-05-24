@@ -126,7 +126,7 @@ function processText(sender, text) {
                 }
                 request(options, function (err, res, body) {
                     if(body.status) {
-                        console.log(body.data.packages);
+                        console.log(JSON.parse(body.data.packages));
 
                         if(body.status == 'fail') {
                             sendTextMessage(doc.user_id, "No tracking Information available yet for "+text);
