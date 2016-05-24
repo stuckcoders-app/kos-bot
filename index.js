@@ -1,5 +1,6 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var inspect = require('eyespect').inspector();
 var request = require('request');
 var assert = require('assert');
 var models = require('./models');
@@ -7,6 +8,7 @@ var Questions = models.Questions;
 var config = require('./config');
 var app_data = require('./data');
 var app = express();
+
 var token = "CAAI8S9mStGQBAIK1SROK1uxYZA7mIv5mYcoX3ngHwYUCkriu11aRFXsoZAGb3kBAZAOhMTYFhztcBeZBFRoyyXuQZChZATj5CfELeeDZAy5NAcBkGwj01talblSb6IzozFGuIsw4mc74SKZBZBLZBjx8OR8xpduaVkivNjZA6A6dI3YNA9MQZBumsl2dAZByaH5atLQ0ZD";
 var db_url = 'mongodb://tobisanya:babapass1!@ds023540.mlab.com:23540/kos-shipping';
 
@@ -110,25 +112,28 @@ function processText(sender, text) {
                 sendTextMessage(sender, "Just a minute...");
 
                 var postData = {
-                            "order_no": text,
-                            "domain_name": 'kos.ng/track.php'
-                            }
+                    name: 'test',
+                    value: 'test'
+                }
 
-                request({
-                    url: 'http://api.mercury.ng/UtilityNonAuth/GetTrackingDetailForOrderNumber',
+                var url = 'https://www.example.com'
+                var options = {
+                    method: 'post',
+                    body: postData,
                     json: true,
-                    method: 'POST',
-                }, function(error, response, body) {
-
-                    body = JSON.parse(response.body);
-                    console.log(body);
-                    if (error) {
-                        console.log('Error sending message: ', error);
-                    } else if (response.body.error) {
-                        console.log('Error: ', response.body.error);
+                    url: url
+                }
+                request(options, function (err, res, body) {
+                    if (err) {
+                        inspect(err, 'error posting json')
+                        return
                     }
-                    sendTextMessage(sender, "You can also get more info at http://kos.ng/track.php?order_number="+text);
-                });
+                    var headers = res.headers
+                    var statusCode = res.statusCode
+                    inspect(headers, 'headers')
+                    inspect(statusCode, 'statusCode')
+                    inspect(body, 'body')
+                })
 
                 break;
             case 'STATE_QUESTION':
