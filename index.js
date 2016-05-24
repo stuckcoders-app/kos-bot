@@ -116,7 +116,9 @@ function processText(sender, text) {
                     value: 'test'
                 }
 
-                var url = 'https://api.mercury.ng/UtilityNonAuth/GetTrackingDetailForOrderNumber'
+                var url = 'https://api.mercury.ng/UtilityNonAuth/GetTrackingDetailForOrderNumber';
+                var url = 'https://www.example.com';
+
                 var options = {
                     method: 'post',
                     body: postData,
@@ -126,15 +128,7 @@ function processText(sender, text) {
                 request(options, function (err, res, body) {
                     console.log('done');
                     console.log(body);
-                    if (err) {
-                        inspect(err, 'error posting json')
-                        return
-                    }
-                    var headers = res.headers
-                    var statusCode = res.statusCode
-                    inspect(headers, 'headers')
-                    inspect(statusCode, 'statusCode')
-                    inspect(body, 'body')
+
                 })
 
                 break;
