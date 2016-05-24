@@ -45,7 +45,7 @@ function sendGenericMessage(sender,text,data) {
     }
   });
 }
-var track = function (text) {
+var track = function (sender,text) {
 
     sendTextMessage(sender, "Just a minute...");
 
@@ -66,7 +66,7 @@ var track = function (text) {
         if(body.status) {
 
             if(body.status == 'fail') {
-                sendTextMessage(doc.user_id, "No tracking Information available yet for "+text);
+                sendTextMessage(sender, "No tracking Information available yet for "+text+ " :(");
             }
             else if (body.status == 'success') {
 
@@ -163,7 +163,7 @@ function processText(sender, text) {
 
         switch(doc.question_type) {
             case 'TRACK_QUESTION':
-                    track(text);
+                    track(sender,text);
                 break;
             case 'STATE_QUESTION':
                 //we asked the user what his state is, so this must be an answer to that question
