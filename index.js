@@ -116,8 +116,7 @@ function processText(sender, text) {
                     value: 'test'
                 }
 
-                var url = 'https://api.mercury.ng';
-               // var url = 'https://www.example.com';
+                var url = 'http://api.mercury.ng/UtilityNonAuth';
 
                 var options = {
                     method: 'post',
