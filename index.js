@@ -449,6 +449,8 @@ app.post('/webhook/', function (req, res) {
 
     if (event.message && event.message.text) {
 
+        console.log("message");
+
         text = event.message.text;
 
         processText(sender, text);
