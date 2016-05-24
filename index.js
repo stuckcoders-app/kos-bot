@@ -103,12 +103,13 @@ function processText(sender, text) {
 
         doc = doc[0];
 
-        console.log(doc.question_type);
 
 
         switch(doc.question_type) {
             case 'TRACK_QUESTION':
-            var postData = {
+                sendTextMessage(sender, "Just a minute...");
+
+                var postData = {
                             "order_no": text,
                             "domain_name": 'kos.ng/track.php'
                             }
@@ -118,6 +119,7 @@ function processText(sender, text) {
                     body:postData,
                     method: 'POST',
                 }, function(error, response, body) {
+                    console.log(response);
 
                     body = JSON.parse(response.body);
                     console.log(body);
