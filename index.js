@@ -434,19 +434,42 @@ app.post('/webhook/', function (req, res) {
     else if (event.postback) {
 
       var postback_text = event.postback.payload;
-      if (postback_text == "USER_REQUEST_SHIPPING_PRICE") {
+        switch (postback_text) {
 
-          sendTextMessage(sender, "Can I know what state you are shipping from?");
+            case "USER_REQUEST_SHIPPING_PRICE" :
 
-          var data = {
-              "user_id" : sender,
-              "question_type" : "STATE_QUESTION",
-              "response" : "",
-              "timestamp" : new Date()
-          };
-          var question = new Questions(data);
-          question.save(data);
-      }
+                sendTextMessage(sender, "Can I know what state you are shipping from?");
+
+                var data = {
+                    "user_id" : sender,
+                    "question_type" : "STATE_QUESTION",
+                    "response" : "",
+                    "timestamp" : new Date()
+                };
+                var question = new Questions(data);
+                question.save(data);
+
+                break;
+
+            case "USER_TRACK_PACKAGE" :
+
+                sendTextMessage(sender, "Can I have your order number? :)");
+
+                var data = {
+                    "user_id" : sender,
+                    "question_type" : "TRACK_QUESTION",
+                    "response" : "",
+                    "timestamp" : new Date()
+                };
+                var question = new Questions(data);
+                question.save(data);
+
+                break;
+
+            default:
+                sendTextMessage(doc.user_id, "An error occured? :)");
+        }
+
 
     }
   }
