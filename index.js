@@ -103,8 +103,10 @@ function processText(sender, text) {
 
         doc = doc[0];
 
+        console.log(doc.question_type);
+
+
         switch(doc.question_type) {
-            console.log(doc.question_type);
             case 'TRACK_QUESTION':
             var postData = {
                             "order_no": text,
