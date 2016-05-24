@@ -120,7 +120,6 @@ function processText(sender, text) {
                 var options = {
                     method: 'post',
                     body: postData,
-                    json: true,
                     url: url
                 }
                 request(options, function (err, res, body) {
