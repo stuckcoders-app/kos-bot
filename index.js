@@ -124,6 +124,8 @@ function processText(sender, text) {
                     url: url
                 }
                 request(options, function (err, res, body) {
+                    console.log('done');
+                    console.log(body);
                     if (err) {
                         inspect(err, 'error posting json')
                         return
