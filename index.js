@@ -112,11 +112,11 @@ function processText(sender, text) {
                 sendTextMessage(sender, "Just a minute...");
 
                 var postData = {
-                    name: 'test',
-                    value: 'test'
+                    "order_no": "F67544689001",
+                    "domain_name": 'kos.ng/track.php'
                 }
 
-                var url = 'https://www.example.com'
+                var url = 'http://api.mercury.ng/UtilityNonAuth/GetTrackingDetailForOrderNumber'
                 var options = {
                     method: 'post',
                     body: postData,
