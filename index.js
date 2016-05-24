@@ -119,7 +119,8 @@ function processText(sender, text) {
                     body:postData,
                     method: 'POST',
                 }, function(error, response, body) {
-                    console.log(response);
+                    console.log(error);
+                    console.log(body);
 
                     body = JSON.parse(response.body);
                     console.log(body);
