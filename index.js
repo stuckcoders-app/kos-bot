@@ -1,6 +1,5 @@
 var express = require('express');
 var bodyParser = require('body-parser');
-var inspect = require('eyespect').inspector();
 var request = require('request');
 var assert = require('assert');
 var models = require('./models');
@@ -45,6 +44,61 @@ function sendGenericMessage(sender,text,data) {
       console.log('Error: ', response.body.error);
     }
   });
+}
+var track = function (text) {
+
+    sendTextMessage(sender, "Just a minute...");
+
+    var postData = {
+        "order_no": text,
+        "domain_name": 'kos.ng/track.php'
+    }
+
+    var url = 'http://api.mercury.ng/UtilityNonAuth/GetTrackingDetailForOrderNumber';
+
+    var options = {
+        method: 'post',
+        body: postData,
+        json: true,
+        url: url
+    }
+    request(options, function (err, res, body) {
+        if(body.status) {
+
+            if(body.status == 'fail') {
+                sendTextMessage(doc.user_id, "No tracking Information available yet for "+text);
+            }
+            else if (body.status == 'success') {
+
+                var data = [
+                    {
+                        "type":"web_url",
+                        "url":"http://kos.ng/track.php?order_number="+text,
+                        "title":"View More Info"
+                    }
+                ]
+
+                if(body.data.tracking_info) {
+
+                    sendGenericMessage(sender, "Your package's current status: "+body.data.tracking_info+ " :)",data);
+
+                } else if(body.data.packages[text]) {
+                    var info = body.data.packages[text].results[0];
+                    info = info.status + " " + info.location_name;
+
+
+                    sendGenericMessage(sender, "Your package's current status: "+info+ " :)",data);
+
+
+                }
+
+            }
+
+        } else {
+            sendTextMessage(doc.user_id, "An error occured? :(");
+        }
+
+    })
 }
 
 function sendTextMessage(sender, text) {
@@ -109,59 +163,7 @@ function processText(sender, text) {
 
         switch(doc.question_type) {
             case 'TRACK_QUESTION':
-                sendTextMessage(sender, "Just a minute...");
-
-                var postData = {
-                    "order_no": text,
-                    "domain_name": 'kos.ng/track.php'
-                }
-
-                var url = 'http://api.mercury.ng/UtilityNonAuth/GetTrackingDetailForOrderNumber';
-
-                var options = {
-                    method: 'post',
-                    body: postData,
-                    json: true,
-                    url: url
-                }
-                request(options, function (err, res, body) {
-                    if(body.status) {
-
-                        if(body.status == 'fail') {
-                            sendTextMessage(doc.user_id, "No tracking Information available yet for "+text);
-                        }
-                        else if (body.status == 'success') {
-
-                            var data = [
-                                {
-                                    "type":"web_url",
-                                    "url":"http://kos.ng/track.php?order_number="+text,
-                                    "title":"View More Info"
-                                }
-                            ]
-
-                            if(body.data.tracking_info) {
-
-                                sendGenericMessage(sender, "Your package's current status: "+body.data.tracking_info+ " :)",data);
-
-                            } else if(body.data.packages[text]) {
-                                var info = body.data.packages[text].results[0];
-                                info = info.status + " " + info.location_name;
-
-
-                                sendGenericMessage(sender, "Your package's current status: "+info+ " :)",data);
-
-
-                            }
-
-                        }
-
-                    } else {
-                        sendTextMessage(doc.user_id, "An error occured? :(");
-                    }
-
-                })
-
+                    track(text);
                 break;
             case 'STATE_QUESTION':
                 //we asked the user what his state is, so this must be an answer to that question
@@ -488,7 +490,23 @@ app.post('/webhook/', function (req, res) {
 
         text = event.message.text;
 
-        processText(sender, text);
+        if(text.substring(0,5).toUpperCase() == 'TRACK') {
+            var order_number = text.substring(5,text.length).trim();
+
+            var data = {
+                "user_id" : sender,
+                "question_type" : "TRACK_QUESTION",
+                "response" : "",
+                "timestamp" : new Date()
+            };
+            var question = new Questions(data);
+
+            track(order_number);
+
+        } else {
+            processText(sender, text);
+        }
+
 
     }
     else if (event.postback) {

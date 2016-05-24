@@ -12,7 +12,6 @@
     "body-parser": "^1.15.0",
     "ejs": "2.3.3",
     "express": "4.13.3",
-    "eyespect": "^0.1.10",
     "mongodb": "^2.1.16",
     "mongoose": "^4.4.13",
     "mpromise": "^0.5.5",
