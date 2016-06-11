@@ -1,15 +1,17 @@
 
-var express = require('express');
-var bodyParser = require('body-parser');
-var request = require('request');
-var assert = require('assert');
-var models = require('./models');
-var Questions = models.Questions;
-var config = require('./config/config');
-var db = require('./config/db');
-var data = require('./data');
-var app = express();
-var router = express.Router();
+"use strict";
+
+const express = require('express');
+const bodyParser = require('body-parser');
+const request = require('request');
+const assert = require('assert');
+const models = require('./models');
+const Questions = models.Questions;
+const config = require('./config/config');
+const db = require('./config/db');
+const data = require('./data');
+const app = express();
+const router = express.Router();
 
 // instruct the app to use the `bodyParser()` middleware for all routes
 app.use(bodyParser.urlencoded({
@@ -23,7 +25,7 @@ app.use(express.static(__dirname + '/public'));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
-require('./app/config/routes.js')(app);
+require('./config/routes.js')(app);
 
 app.get('/test-mongo', function(req, res) {
     /*

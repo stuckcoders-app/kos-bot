@@ -1,4 +1,6 @@
-var utils = {
+"use strict";
+
+let utils = {
 
 };
 

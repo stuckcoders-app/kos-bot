@@ -1,13 +1,14 @@
 /**
  * Created by oluwatobi.okusanya on 14/04/16.
  */
+"use strict";
 
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-var connect = function(url, done) {
+let connect = function(url, done) {
     mongoose.connect(url);
 
-    var db = mongoose.connection;
+    let db = mongoose.connection;
     db.on('error', console.error.bind(console, 'connection error:'));
     db.once('open', function() {
         // we're connected!
