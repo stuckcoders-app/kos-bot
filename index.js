@@ -1,24 +1,98 @@
+
 var express = require('express');
 var bodyParser = require('body-parser');
 var request = require('request');
 var assert = require('assert');
 var models = require('./models');
 var Questions = models.Questions;
-var config = require('./config');
-var app_data = require('./data');
+var config = require('./config/config');
+var db = require('./config/db');
+var data = require('./data');
 var app = express();
-
-var token = "CAAI8S9mStGQBAIK1SROK1uxYZA7mIv5mYcoX3ngHwYUCkriu11aRFXsoZAGb3kBAZAOhMTYFhztcBeZBFRoyyXuQZChZATj5CfELeeDZAy5NAcBkGwj01talblSb6IzozFGuIsw4mc74SKZBZBLZBjx8OR8xpduaVkivNjZA6A6dI3YNA9MQZBumsl2dAZByaH5atLQ0ZD";
-var db_url = 'mongodb://tobisanya:babapass1!@ds023540.mlab.com:23540/kos-shipping';
+var router = express.Router();
 
 // instruct the app to use the `bodyParser()` middleware for all routes
 app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(bodyParser.json());
+app.set('port', (process.env.PORT || 5000));
+app.use(express.static(__dirname + '/public'));
+
+// views is directory for all template files
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+
+require('./app/config/routes.js')(app);
+
+app.get('/test-mongo', function(req, res) {
+    /*
+        var query = {'user_id': "1111111111"};
+        Questions.findOneAndUpdate(query, { "response": 'fisherman' }, {upsert:true}, function(err, doc){
+            if (err) return res.send(500, { error: err });
+            return res.send("succesfully saved");
+        });
+    */
+});
+
+app.post('/webhook/', function (req, res) {
+  messaging_events = req.body.entry[0].messaging;
+  for (i = 0; i < messaging_events.length; i++) {
+    event = req.body.entry[0].messaging[i];
+    sender = event.sender.id;
+
+    if (event.message && event.message.text) {
+        text = event.message.text;
+        if(text.substring(0,5).toUpperCase() == 'TRACK') {
+            var order_number = text.substring(5,text.length).trim();
+            var data = {
+                "user_id" : sender,
+                "question_type" : "TRACK_QUESTION",
+                "response" : "",
+                "timestamp" : new Date()
+            };
+            var question = new Questions(data);
+            track(sender,order_number);
+        } else {
+            processText(sender, text);
+        }
+    }
+    else if (event.postback) {
+      var postback_text = event.postback.payload;
+        switch (postback_text) {
+            case "USER_REQUEST_SHIPPING_PRICE" :
+                sendTextMessage(sender, "Can I know what state you are shipping from?");
+                var data = {
+                    "user_id" : sender,
+                    "question_type" : "STATE_QUESTION",
+                    "response" : "",
+                    "timestamp" : new Date()
+                };
+                var question = new Questions(data);
+                question.save(data);
+                break;
+
+            case "USER_TRACK_PACKAGE" :
+                sendTextMessage(sender, "Can I have your order number? :)");
+                var data = {
+                    "user_id" : sender,
+                    "question_type" : "TRACK_QUESTION",
+                    "response" : "",
+                    "timestamp" : new Date()
+                };
+                var question = new Questions(data);
+                question.save(data);
+                break;
+
+            default:
+                sendTextMessage(doc.user_id, "An error occured? :)");
+        }
+    }
+  }
+  res.sendStatus(200);
+});
 
 function sendGenericMessage(sender,text,data) {
-
   messageData = {
     "attachment": {
       "type": "template",
@@ -31,7 +105,7 @@ function sendGenericMessage(sender,text,data) {
   };
   request({
     url: 'https://graph.facebook.com/v2.6/me/messages',
-    qs: {access_token:token},
+    qs: { access_token: config.token },
     method: 'POST',
     json: {
       recipient: {id:sender},
@@ -45,17 +119,14 @@ function sendGenericMessage(sender,text,data) {
     }
   });
 }
+
 var track = function (sender,text) {
-
     sendTextMessage(sender, "Just a minute...");
-
     var postData = {
         "order_no": text,
         "domain_name": 'kos.ng/track.php'
     }
-
     var url = 'http://api.mercury.ng/UtilityNonAuth/GetTrackingDetailForOrderNumber';
-
     var options = {
         method: 'post',
         body: postData,
@@ -64,12 +135,10 @@ var track = function (sender,text) {
     }
     request(options, function (err, res, body) {
         if(body.status) {
-
             if(body.status == 'fail') {
                 sendTextMessage(sender, "No tracking Information available yet for "+text+ " :(");
             }
             else if (body.status == 'success') {
-
                 var data = [
                     {
                         "type":"web_url",
@@ -79,25 +148,16 @@ var track = function (sender,text) {
                 ]
 
                 if(body.data.tracking_info) {
-
                     sendGenericMessage(sender, "Your package's current status: "+body.data.tracking_info+ " :)",data);
-
                 } else if(body.data.packages[text]) {
                     var info = body.data.packages[text].results[0];
                     info = info.status + " " + info.location_name;
-
-
                     sendGenericMessage(sender, "Your package's current status: "+info+ " :)",data);
-
-
                 }
-
             }
-
         } else {
             sendTextMessage(doc.user_id, "An error occured? :(");
         }
-
     })
 }
 
@@ -107,7 +167,7 @@ function sendTextMessage(sender, text) {
     }
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: {access_token:token},
+        qs: { access_token: config.token },
         method: 'POST',
         json: {
             recipient: {id:sender},
@@ -122,33 +182,7 @@ function sendTextMessage(sender, text) {
     });
 }
 
-app.set('port', (process.env.PORT || 5000));
-
-app.use(express.static(__dirname + '/public'));
-
-// views is directory for all template files
-app.set('views', __dirname + '/views');
-app.set('view engine', 'ejs');
-
-app.get('/', function(request, response) {
-  response.render('pages/index');
-});
-
-app.get('/test-mongo', function(req, res) {
-
-    /*var query = {'user_id': "1111111111"};
-
-    Questions.findOneAndUpdate(query, { "response": 'fisherman' }, {upsert:true}, function(err, doc){
-        if (err) return res.send(500, { error: err });
-        return res.send("succesfully saved");
-    });
-*/
-
-
-});
-
 function processText(sender, text) {
-
     var query =  Questions.
         find({ user_id: sender }).
         limit(1).
@@ -156,11 +190,7 @@ function processText(sender, text) {
         exec();
 
     query.then(function (doc) {
-
         doc = doc[0];
-
-
-
         switch(doc.question_type) {
             case 'TRACK_QUESTION':
                     track(sender,text);
@@ -170,17 +200,12 @@ function processText(sender, text) {
                 //check if user's answer is valid, if valid, update db with users response and ask for LGA
 
                 var found = false;
-
-
-                for(var i in app_data.states) {
-                    if(text.toLowerCase() == app_data.states[i].name.toLowerCase()) {
+                for(var i in data.states) {
+                    if(text.toLowerCase() == data.states[i].name.toLowerCase()) {
                         found = true;
-
                         var query = {'user_id': doc.user_id,  question_type:'STATE_QUESTION'};
-
-                        Questions.findOneAndUpdate(query, { "response": app_data.states[i].name, "response_id" : app_data.states[i].id }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
+                        Questions.findOneAndUpdate(query, { "response": data.states[i].name, "response_id" : data.states[i].id }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
                             if (!err) {
-
                                 var sample_data = {
                                     "user_id" : doc.user_id,
                                     "question_type" : "LGA_QUESTION",
@@ -189,14 +214,10 @@ function processText(sender, text) {
                                     "timestamp" : new Date()
                                 };
                                 var gnr = new Questions(sample_data);
-
                                 gnr.save();
-
                                 sendTextMessage(doc.user_id, "Cool, what Local Government in "+ text +" are you shipping from ?");
                             }
-
                         });
-
                         break;
                     }
                 }
@@ -208,7 +229,6 @@ function processText(sender, text) {
             case 'LGA_QUESTION':
                 //we asked the user what his lga is, so this must be an answer to that question
                 //check if user's answer is valid, if valid, update db with users response and ask for second state
-
                 //first get the state answer
 
                 var found_lga = false;
@@ -219,27 +239,17 @@ function processText(sender, text) {
                     exec();
 
                 query_state.then(function (doc) {
-
                     var state = doc[0].response;
-
                     dance:
-                    for(var i in app_data.states) {
-
-                        if(state.toLowerCase() == app_data.states[i].name.toLowerCase()) {
-
-                            if(app_data.states[i].lgas) {
-
-                                for(var j in app_data.states[i].lgas) {
-
-                                    if(text.toLowerCase() == app_data.states[i].lgas[j].name.toLowerCase()) {
-
+                    for(var i in data.states) {
+                        if(state.toLowerCase() == data.states[i].name.toLowerCase()) {
+                            if(data.states[i].lgas) {
+                                for(var j in data.states[i].lgas) {
+                                    if(text.toLowerCase() == data.states[i].lgas[j].name.toLowerCase()) {
                                         found_lga = true;
-
                                         var query = {'user_id': sender,  question_type:'LGA_QUESTION'};
-
-                                        Questions.findOneAndUpdate(query, { "response": app_data.states[i].lgas[j].name, "response_id" : app_data.states[i].lgas[j].id }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
+                                        Questions.findOneAndUpdate(query, { "response": data.states[i].lgas[j].name, "response_id" : data.states[i].lgas[j].id }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
                                             if (!err) {
-
                                                 var sample_data = {
                                                     "user_id" : sender,
                                                     "question_type" : "STATE_TWO_QUESTION",
@@ -248,14 +258,10 @@ function processText(sender, text) {
                                                     "timestamp" : new Date()
                                                 };
                                                 var gnr = new Questions(sample_data);
-
                                                 gnr.save();
-
                                                 sendTextMessage(sender, "Nice, what state are you shipping to? ");
                                             }
-
                                         });
-
                                         break dance;
                                     }
                                 }
@@ -268,19 +274,13 @@ function processText(sender, text) {
                 });
                 break;
             case 'STATE_TWO_QUESTION':
-
                 var found = false;
-
-
-                for(var i in app_data.states) {
-                    if(text.toLowerCase() == app_data.states[i].name.toLowerCase()) {
+                for(var i in data.states) {
+                    if(text.toLowerCase() == data.states[i].name.toLowerCase()) {
                         found = true;
-
                         var query = {'user_id': doc.user_id,  question_type:'STATE_TWO_QUESTION'};
-
-                        Questions.findOneAndUpdate(query, { "response": app_data.states[i].name, "response_id" : app_data.states[i].id  }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
+                        Questions.findOneAndUpdate(query, { "response": data.states[i].name, "response_id" : data.states[i].id  }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
                             if (!err) {
-
                                 var sample_data = {
                                     "user_id" : doc.user_id,
                                     "question_type" : "LGA_TWO_QUESTION",
@@ -289,14 +289,10 @@ function processText(sender, text) {
                                     "timestamp" : new Date()
                                 };
                                 var gnr = new Questions(sample_data);
-
                                 gnr.save();
-
                                 sendTextMessage(doc.user_id, "Cool, what Local Government in "+ text +" are you shipping to ?");
                             }
-
                         });
-
                         break;
                     }
                 }
@@ -306,7 +302,6 @@ function processText(sender, text) {
 
                 break;
             case 'LGA_TWO_QUESTION':
-
                 var found_lga = false;
                 var query_state =  Questions.
                     find({ user_id: sender, question_type:'STATE_TWO_QUESTION' }).
@@ -315,27 +310,17 @@ function processText(sender, text) {
                     exec();
 
                 query_state.then(function (doc) {
-
                     var state = doc[0].response;
-
                     dance:
-                        for(var i in app_data.states) {
-
-                            if(state.toLowerCase() == app_data.states[i].name.toLowerCase()) {
-
-                                if(app_data.states[i].lgas) {
-
-                                    for(var j in app_data.states[i].lgas) {
-
-                                        if(text.toLowerCase() == app_data.states[i].lgas[j].name.toLowerCase()) {
-
+                        for(var i in data.states) {
+                            if(state.toLowerCase() == data.states[i].name.toLowerCase()) {
+                                if(data.states[i].lgas) {
+                                    for(var j in data.states[i].lgas) {
+                                        if(text.toLowerCase() == data.states[i].lgas[j].name.toLowerCase()) {
                                             found_lga = true;
-
                                             var query = {'user_id': sender,  question_type:'LGA_TWO_QUESTION'};
-
-                                            Questions.findOneAndUpdate(query, { "response": app_data.states[i].lgas[j].name, "response_id" : app_data.states[i].lgas[j].id }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
+                                            Questions.findOneAndUpdate(query, { "response": data.states[i].lgas[j].name, "response_id" : data.states[i].lgas[j].id }, {upsert:false, sort: { 'timestamp': -1 }}, function(err, doc){
                                                 if (!err) {
-
                                                     var sample_data = {
                                                         "user_id" : sender,
                                                         "question_type" : "WEIGHT_QUESTION",
@@ -344,14 +329,10 @@ function processText(sender, text) {
                                                         "timestamp" : new Date()
                                                     };
                                                     var gnr = new Questions(sample_data);
-
                                                     gnr.save();
-
                                                     sendTextMessage(sender, "You are doing great! Can I know the weight (in KG) of the item you intend to ship");
                                                 }
-
                                             });
-
                                             break dance;
                                         }
                                     }
@@ -366,11 +347,8 @@ function processText(sender, text) {
             case 'WEIGHT_QUESTION':
                 //check if weight is a valid float
                 var weight = parseFloat(text);
-
                 if(isNaN(text)) {
-
                     sendTextMessage(doc.user_id, "Please enter a valid weight");
-
                     return;
                 }
                 //check that we have all info to fetch shipping fee,
@@ -443,11 +421,9 @@ function processText(sender, text) {
                                                    }
                                                    else if(body.message == "No zone mapping found for this LGA"){
                                                        sendTextMessage(sender, "Sorry, We currently don't ship  between "+lga_text+"("+state_text+") and "+lga_2_text+"("+state_2_text+")");
-
                                                    }
                                                });
                                            }
-
                                        });
                                    }
 
@@ -459,103 +435,16 @@ function processText(sender, text) {
                 });
 
                 //notify user that we are fetching shipping fee and fetch
-
-
                 break;
 
             default:
                 sendTextMessage(doc.user_id, "An error occured? :(");
-
         }
     });
 
 }
 
-app.get('/webhook/', function (req, res) {
-
-  if (req.query['hub.verify_token'] === 'my_very_own_token') {
-    res.send(req.query['hub.challenge']);
-  }
-  res.send('Error, wrong validation token');
-});
-app.post('/webhook/', function (req, res) {
-
-  messaging_events = req.body.entry[0].messaging;
-  for (i = 0; i < messaging_events.length; i++) {
-    event = req.body.entry[0].messaging[i];
-    sender = event.sender.id;
-
-    if (event.message && event.message.text) {
-
-
-        text = event.message.text;
-
-        if(text.substring(0,5).toUpperCase() == 'TRACK') {
-            var order_number = text.substring(5,text.length).trim();
-
-            var data = {
-                "user_id" : sender,
-                "question_type" : "TRACK_QUESTION",
-                "response" : "",
-                "timestamp" : new Date()
-            };
-            var question = new Questions(data);
-
-            track(sender,order_number);
-
-        } else {
-            processText(sender, text);
-        }
-
-
-    }
-    else if (event.postback) {
-
-      var postback_text = event.postback.payload;
-        switch (postback_text) {
-
-            case "USER_REQUEST_SHIPPING_PRICE" :
-
-                sendTextMessage(sender, "Can I know what state you are shipping from?");
-
-                var data = {
-                    "user_id" : sender,
-                    "question_type" : "STATE_QUESTION",
-                    "response" : "",
-                    "timestamp" : new Date()
-                };
-                var question = new Questions(data);
-                question.save(data);
-
-                break;
-
-            case "USER_TRACK_PACKAGE" :
-
-                sendTextMessage(sender, "Can I have your order number? :)");
-
-                var data = {
-                    "user_id" : sender,
-                    "question_type" : "TRACK_QUESTION",
-                    "response" : "",
-                    "timestamp" : new Date()
-                };
-                var question = new Questions(data);
-                question.save(data);
-
-                break;
-
-            default:
-                sendTextMessage(doc.user_id, "An error occured? :)");
-        }
-
-
-    }
-  }
-  res.sendStatus(200);
-});
-
-
-config.connect(db_url, function(err) {
+db.connect(config.db_url, function(err) {
     if (err) {
         console.log('Unable to connect to Mongo.')
         process.exit(1)

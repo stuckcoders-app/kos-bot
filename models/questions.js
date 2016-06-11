@@ -1,7 +1,6 @@
 /**
  * Created by oluwatobi.okusanya on 14/04/16.
  */
-var assert = require('assert');
 var mongoose = require('mongoose');
 
 // Document schema in MongoDB

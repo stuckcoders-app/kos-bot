@@ -1,374 +1,373 @@
-{
-    "states": [
-        {
-            "id": 1061493586,
-            "name": "Abia",
-            "lga"  : [
-                        {
-                        "id": 362,
-                        "name": "Bende",
-                        "state_id": 1061493586
-                        },
-                        {
-                        "id": 363,
-                        "name": "Isuikwuato",
-                        "state_id": 1061493586
-                        },
-                        {
-                        "id": 364,
-                        "name": "Umu Nneochi",
-                        "state_id": 1061493586
-                        },
-                        {
-                        "id": 365,
-                        "name": "Isiala-ngwa North",
-                        "state_id": 1061493586
-                        },
-                        {
-                        "id": 366,
-                        "name": "Isiala-ngwa South",
-                        "state_id": 1061493586
-                        },
-                        {
-                        "id": 367,
-                        "name": "Osisioma Ngwa",
-                        "state_id": 1061493586
-                        },
-                        {
-                        "id": 368,
-                        "name": "Aba North",
-                        "state_id": 1061493586
-                        },
-                        {
-                        "id": 369,
-                        "name": "Aba South",
-                        "state_id": 1061493586
-                        },
-                        {
-                        "id": 370,
-                        "name": "Obi Ngwa",
-                        "state_id": 1061493586
-                        },
-                        {
-                        "id": 371,
-                        "name": "Ugwunagbo",
-                        "state_id": 1061493586
-                        },
-                        {
-                        "id": 372,
-                        "name": "Ukwa West",
-                        "state_id": 1061493586
-                        },
-                        {
-                        "id": 373,
-                        "name": "Ukwa East",
-                        "state_id": 1061493586
-                        },
-                        {
-                        "id": 374,
-                        "name": "Ohafia",
-                        "state_id": 1061493586
-                        },
-                        {
-                        "id": 375,
-                        "name": "Arochukwu",
-                        "state_id": 1061493586
-                        },
-                        {
-                        "id": 376,
-                        "name": "Umuahia North",
-                        "state_id": 1061493586
-                        },
-                        {
-                        "id": 377,
-                        "name": "Umuahia South",
-                        "state_id": 1061493586
-                        },
-                        {
-                        "id": 378,
-                        "name": "Ikwauano",
-                        "state_id": 1061493586
-                        }
-                        ]
-        },
-        {
-            "id": 1061493587,
-            "name": "Abuja",
-            "lgas": [
-                        {
-                            "id": 134,
-                            "name": "Abuja Municipal",
-                            "state_id": 1061493587
-                        },
-                        {
-                            "id": 135,
-                            "name": "Bwari",
-                            "state_id": 1061493587
-                        },
-                        {
-                            "id": 136,
-                            "name": "Kuje",
-                            "state_id": 1061493587
-                        },
-                        {
-                            "id": 137,
-                            "name": "Gwagwalada",
-                            "state_id": 1061493587
-                        },
-                        {
-                            "id": 138,
-                            "name": "Kwali",
-                            "state_id": 1061493587
-                        },
-                        {
-                            "id": 139,
-                            "name": "Abaji",
-                            "state_id": 1061493587
-                        }
-            ]
-        },
-        {
-            "id": 1061493588,
-            "name": "Adamawa"
-        },
-        {
-            "id": 1061493589,
-            "name": "Akwa Ibom"
-        },
-        {
-            "id": 1061493590,
-            "name": "Anambra"
-        },
-        {
-            "id": 1061493591,
-            "name": "Bauchi"
-        },
-        {
-            "id": 1061493592,
-            "name": "Bayelsa"
-        },
-        {
-            "id": 1061493593,
-            "name": "Benue"
-        },
-        {
-            "id": 1061493594,
-            "name": "Borno"
-        },
-        {
-            "id": 1061493595,
-            "name": "Cross River"
-        },
-        {
-            "id": 1061493596,
-            "name": "Delta"
-        },
-        {
-            "id": 1061493597,
-            "name": "Ebonyi"
-        },
-        {
-            "id": 1061493598,
-            "name": "Edo"
-        },
-        {
-            "id": 1061493599,
-            "name": "Ekiti"
-        },
-        {
-            "id": 1061493600,
-            "name": "Enugu"
-        },
-        {
-            "id": 1061493601,
-            "name": "Gombe"
-        },
-        {
-            "id": 1061493602,
-            "name": "Imo"
-        },
-        {
-            "id": 1061493603,
-            "name": "Jigawa"
-        },
-        {
-            "id": 1061493604,
-            "name": "Kaduna"
-        },
-        {
-            "id": 1061493605,
-            "name": "Kano"
-        },
-        {
-            "id": 1061493606,
-            "name": "Katsina"
-        },
-        {
-            "id": 1061493607,
-            "name": "Kebbi"
-        },
-        {
-            "id": 1061493608,
-            "name": "Kogi"
-        },
-        {
-            "id": 1061493609,
-            "name": "Kwara"
-        },
-        {
-            "id": 1061493610,
-            "name": "Lagos",
-            "lgas": [
-                        {
-                            "id": 754,
-                            "name": "Agege/ijaiye",
-                            "state_id": 1061493610
-                        },
-                        {
-                            "id": 755,
-                            "name": "Ajeromi/ifelodun",
-                            "state_id": 1061493610
-                        },
-                        {
-                            "id": 756,
-                            "name": "Alimosho",
-                            "state_id": 1061493610
-                        },
-                        {
-                            "id": 757,
-                            "name": "Amuwo Odofin",
-                            "state_id": 1061493610
-                        },
-                        {
-                            "id": 758,
-                            "name": "Apapa",
-                            "state_id": 1061493610
-                        },
-                        {
-                            "id": 760,
-                            "name": "Epe",
-                            "state_id": 1061493610
-                        },
-                        {
-                            "id": 761,
-                            "name": "Eti Osa",
-                            "state_id": 1061493610
-                        },
-                        {
-                            "id": 762,
-                            "name": "Ibeju/lekki",
-                            "state_id": 1061493610
-                        },
-                        {
-                            "id": 763,
-                            "name": "Ifako Ijaiye",
-                            "state_id": 1061493610
-                        },
-                        {
-                            "id": 764,
-                            "name": "Ikeja",
-                            "state_id": 1061493610
-                        },
-                        {
-                            "id": 765,
-                            "name": "Ikorodu",
-                            "state_id": 1061493610
-                        },
-                        {
-                            "id": 766,
-                            "name": "Kosofe",
-                            "state_id": 1061493610
-                        },
-                        {
-                            "id": 767,
-                            "name": "Lagos Island",
-                            "state_id": 1061493610
-                        },
-                        {
-                            "id": 768,
-                            "name": "Lagos Mainland",
-                            "state_id": 1061493610
-                        },
-                        {
-                            "id": 769,
-                            "name": "Mushin",
-                            "state_id": 1061493610
-                        },
-                        {
-                            "id": 770,
-                            "name": "Ojo",
-                            "state_id": 1061493610
-                        },
-                        {
-                            "id": 771,
-                            "name": "Oshodi/isolo",
-                            "state_id": 1061493610
-                        },
-                        {
-                            "id": 772,
-                            "name": "Shomolu",
-                            "state_id": 1061493610
-                        },
-                        {
-                            "id": 773,
-                            "name": "Surulere",
-                            "state_id": 1061493610
-                        },
-                        {
-                            "id": 957,
-                            "name": "Badagry",
-                            "state_id": 1061493610
-                        }
-                    ]
-
-        },
-        {
-            "id": 1061493611,
-            "name": "Nasarawa"
-        },
-        {
-            "id": 1061493612,
-            "name": "Niger"
-        },
-        {
-            "id": 1061493613,
-            "name": "Ogun"
-        },
-        {
-            "id": 1061493614,
-            "name": "Ondo"
-        },
-        {
-            "id": 1061493615,
-            "name": "Osun"
-        },
-        {
-            "id": 1061493616,
-            "name": "Oyo"
-        },
-        {
-            "id": 1061493617,
-            "name": "Plateau"
-        },
-        {
-            "id": 1061493618,
-            "name": "Rivers"
-        },
-        {
-            "id": 1061493619,
-            "name": "Sokoto"
-        },
-        {
-            "id": 1061493620,
-            "name": "Taraba"
-        },
-        {
-            "id": 1061493621,
-            "name": "Yobe"
-        },
-        {
-            "id": 1061493622,
-            "name": "Zamfara"
-        }
-    ]
+{  
+   "states":[  
+      {  
+         "id":1061493586,
+         "name":"Abia",
+         "lga":[  
+            {  
+               "id":362,
+               "name":"Bende",
+               "state_id":1061493586
+            },
+            {  
+               "id":363,
+               "name":"Isuikwuato",
+               "state_id":1061493586
+            },
+            {  
+               "id":364,
+               "name":"Umu Nneochi",
+               "state_id":1061493586
+            },
+            {  
+               "id":365,
+               "name":"Isiala-ngwa North",
+               "state_id":1061493586
+            },
+            {  
+               "id":366,
+               "name":"Isiala-ngwa South",
+               "state_id":1061493586
+            },
+            {  
+               "id":367,
+               "name":"Osisioma Ngwa",
+               "state_id":1061493586
+            },
+            {  
+               "id":368,
+               "name":"Aba North",
+               "state_id":1061493586
+            },
+            {  
+               "id":369,
+               "name":"Aba South",
+               "state_id":1061493586
+            },
+            {  
+               "id":370,
+               "name":"Obi Ngwa",
+               "state_id":1061493586
+            },
+            {  
+               "id":371,
+               "name":"Ugwunagbo",
+               "state_id":1061493586
+            },
+            {  
+               "id":372,
+               "name":"Ukwa West",
+               "state_id":1061493586
+            },
+            {  
+               "id":373,
+               "name":"Ukwa East",
+               "state_id":1061493586
+            },
+            {  
+               "id":374,
+               "name":"Ohafia",
+               "state_id":1061493586
+            },
+            {  
+               "id":375,
+               "name":"Arochukwu",
+               "state_id":1061493586
+            },
+            {  
+               "id":376,
+               "name":"Umuahia North",
+               "state_id":1061493586
+            },
+            {  
+               "id":377,
+               "name":"Umuahia South",
+               "state_id":1061493586
+            },
+            {  
+               "id":378,
+               "name":"Ikwauano",
+               "state_id":1061493586
+            }
+         ]
+      },
+      {  
+         "id":1061493587,
+         "name":"Abuja",
+         "lgas":[  
+            {  
+               "id":134,
+               "name":"Abuja Municipal",
+               "state_id":1061493587
+            },
+            {  
+               "id":135,
+               "name":"Bwari",
+               "state_id":1061493587
+            },
+            {  
+               "id":136,
+               "name":"Kuje",
+               "state_id":1061493587
+            },
+            {  
+               "id":137,
+               "name":"Gwagwalada",
+               "state_id":1061493587
+            },
+            {  
+               "id":138,
+               "name":"Kwali",
+               "state_id":1061493587
+            },
+            {  
+               "id":139,
+               "name":"Abaji",
+               "state_id":1061493587
+            }
+         ]
+      },
+      {  
+         "id":1061493588,
+         "name":"Adamawa"
+      },
+      {  
+         "id":1061493589,
+         "name":"Akwa Ibom"
+      },
+      {  
+         "id":1061493590,
+         "name":"Anambra"
+      },
+      {  
+         "id":1061493591,
+         "name":"Bauchi"
+      },
+      {  
+         "id":1061493592,
+         "name":"Bayelsa"
+      },
+      {  
+         "id":1061493593,
+         "name":"Benue"
+      },
+      {  
+         "id":1061493594,
+         "name":"Borno"
+      },
+      {  
+         "id":1061493595,
+         "name":"Cross River"
+      },
+      {  
+         "id":1061493596,
+         "name":"Delta"
+      },
+      {  
+         "id":1061493597,
+         "name":"Ebonyi"
+      },
+      {  
+         "id":1061493598,
+         "name":"Edo"
+      },
+      {  
+         "id":1061493599,
+         "name":"Ekiti"
+      },
+      {  
+         "id":1061493600,
+         "name":"Enugu"
+      },
+      {  
+         "id":1061493601,
+         "name":"Gombe"
+      },
+      {  
+         "id":1061493602,
+         "name":"Imo"
+      },
+      {  
+         "id":1061493603,
+         "name":"Jigawa"
+      },
+      {  
+         "id":1061493604,
+         "name":"Kaduna"
+      },
+      {  
+         "id":1061493605,
+         "name":"Kano"
+      },
+      {  
+         "id":1061493606,
+         "name":"Katsina"
+      },
+      {  
+         "id":1061493607,
+         "name":"Kebbi"
+      },
+      {  
+         "id":1061493608,
+         "name":"Kogi"
+      },
+      {  
+         "id":1061493609,
+         "name":"Kwara"
+      },
+      {  
+         "id":1061493610,
+         "name":"Lagos",
+         "lgas":[  
+            {  
+               "id":754,
+               "name":"Agege/ijaiye",
+               "state_id":1061493610
+            },
+            {  
+               "id":755,
+               "name":"Ajeromi/ifelodun",
+               "state_id":1061493610
+            },
+            {  
+               "id":756,
+               "name":"Alimosho",
+               "state_id":1061493610
+            },
+            {  
+               "id":757,
+               "name":"Amuwo Odofin",
+               "state_id":1061493610
+            },
+            {  
+               "id":758,
+               "name":"Apapa",
+               "state_id":1061493610
+            },
+            {  
+               "id":760,
+               "name":"Epe",
+               "state_id":1061493610
+            },
+            {  
+               "id":761,
+               "name":"Eti Osa",
+               "state_id":1061493610
+            },
+            {  
+               "id":762,
+               "name":"Ibeju/lekki",
+               "state_id":1061493610
+            },
+            {  
+               "id":763,
+               "name":"Ifako Ijaiye",
+               "state_id":1061493610
+            },
+            {  
+               "id":764,
+               "name":"Ikeja",
+               "state_id":1061493610
+            },
+            {  
+               "id":765,
+               "name":"Ikorodu",
+               "state_id":1061493610
+            },
+            {  
+               "id":766,
+               "name":"Kosofe",
+               "state_id":1061493610
+            },
+            {  
+               "id":767,
+               "name":"Lagos Island",
+               "state_id":1061493610
+            },
+            {  
+               "id":768,
+               "name":"Lagos Mainland",
+               "state_id":1061493610
+            },
+            {  
+               "id":769,
+               "name":"Mushin",
+               "state_id":1061493610
+            },
+            {  
+               "id":770,
+               "name":"Ojo",
+               "state_id":1061493610
+            },
+            {  
+               "id":771,
+               "name":"Oshodi/isolo",
+               "state_id":1061493610
+            },
+            {  
+               "id":772,
+               "name":"Shomolu",
+               "state_id":1061493610
+            },
+            {  
+               "id":773,
+               "name":"Surulere",
+               "state_id":1061493610
+            },
+            {  
+               "id":957,
+               "name":"Badagry",
+               "state_id":1061493610
+            }
+         ]
+      },
+      {  
+         "id":1061493611,
+         "name":"Nasarawa"
+      },
+      {  
+         "id":1061493612,
+         "name":"Niger"
+      },
+      {  
+         "id":1061493613,
+         "name":"Ogun"
+      },
+      {  
+         "id":1061493614,
+         "name":"Ondo"
+      },
+      {  
+         "id":1061493615,
+         "name":"Osun"
+      },
+      {  
+         "id":1061493616,
+         "name":"Oyo"
+      },
+      {  
+         "id":1061493617,
+         "name":"Plateau"
+      },
+      {  
+         "id":1061493618,
+         "name":"Rivers"
+      },
+      {  
+         "id":1061493619,
+         "name":"Sokoto"
+      },
+      {  
+         "id":1061493620,
+         "name":"Taraba"
+      },
+      {  
+         "id":1061493621,
+         "name":"Yobe"
+      },
+      {  
+         "id":1061493622,
+         "name":"Zamfara"
+      }
+   ]
 }
