@@ -9,6 +9,7 @@ const models = require('./models');
 const Questions = models.Questions;
 const config = require('./config/config');
 const db = require('./config/db');
+const utils = require('./components/utils');
 const data = require('./data');
 const app = express();
 const router = express.Router();
@@ -38,7 +39,7 @@ app.get('/test-mongo', function(req, res) {
 });
 
 app.post('/webhook/', function (req, res) {
-  messaging_events = req.body.entry[0].messaging;
+  var messaging_events = req.body.entry[0].messaging;
   for (i = 0; i < messaging_events.length; i++) {
     event = req.body.entry[0].messaging[i];
     sender = event.sender.id;
@@ -63,7 +64,7 @@ app.post('/webhook/', function (req, res) {
       var postback_text = event.postback.payload;
         switch (postback_text) {
             case "USER_REQUEST_SHIPPING_PRICE" :
-                sendTextMessage(sender, "Can I know what state you are shipping from?");
+                utils.sendTextMessage(sender, "Can I know what state you are shipping from?");
                 var data = {
                     "user_id" : sender,
                     "question_type" : "STATE_QUESTION",
@@ -75,7 +76,7 @@ app.post('/webhook/', function (req, res) {
                 break;
 
             case "USER_TRACK_PACKAGE" :
-                sendTextMessage(sender, "Can I have your order number? :)");
+                utils.sendTextMessage(sender, "Can I have your order number? :)");
                 var data = {
                     "user_id" : sender,
                     "question_type" : "TRACK_QUESTION",
@@ -87,48 +88,20 @@ app.post('/webhook/', function (req, res) {
                 break;
 
             default:
-                sendTextMessage(doc.user_id, "An error occured? :)");
+                utils.sendTextMessage(doc.user_id, "An error occured? :)");
         }
     }
   }
   res.sendStatus(200);
 });
 
-function sendGenericMessage(sender,text,data) {
-  messageData = {
-    "attachment": {
-      "type": "template",
-      "payload": {
-        "template_type": "button",
-        "text": text,
-          "buttons": data
-      }
-    }
-  };
-  request({
-    url: 'https://graph.facebook.com/v2.6/me/messages',
-    qs: { access_token: config.token },
-    method: 'POST',
-    json: {
-      recipient: {id:sender},
-      message: messageData,
-    }
-  }, function(error, response, body) {
-    if (error) {
-      console.log('Error sending message: ', error);
-    } else if (response.body.error) {
-      console.log('Error: ', response.body.error);
-    }
-  });
-}
-
 var track = function (sender,text) {
-    sendTextMessage(sender, "Just a minute...");
+    utils.sendTextMessage(sender, "Just a minute...");
     var postData = {
         "order_no": text,
         "domain_name": 'kos.ng/track.php'
     }
-    var url = 'http://api.mercury.ng/UtilityNonAuth/GetTrackingDetailForOrderNumber';
+    var url = config.track_url;
     var options = {
         method: 'post',
         body: postData,
@@ -138,48 +111,27 @@ var track = function (sender,text) {
     request(options, function (err, res, body) {
         if(body.status) {
             if(body.status == 'fail') {
-                sendTextMessage(sender, "No tracking Information available yet for "+text+ " :(");
+                utils.sendTextMessage(sender, "No tracking Information available yet for "+text+ " :(");
             }
             else if (body.status == 'success') {
                 var data = [
                     {
                         "type":"web_url",
-                        "url":"http://kos.ng/track.php?order_number="+text,
+                        "url":config.track_info_url+text,
                         "title":"View More Info"
                     }
                 ]
 
                 if(body.data.tracking_info) {
-                    sendGenericMessage(sender, "Your package's current status: "+body.data.tracking_info+ " :)",data);
+                    utils.sendGenericMessage(sender, "Your package's current status: "+body.data.tracking_info+ " :)",data);
                 } else if(body.data.packages[text]) {
                     var info = body.data.packages[text].results[0];
                     info = info.status + " " + info.location_name;
-                    sendGenericMessage(sender, "Your package's current status: "+info+ " :)",data);
+                    utils.sendGenericMessage(sender, "Your package's current status: "+info+ " :)",data);
                 }
             }
         } else {
-            sendTextMessage(doc.user_id, "An error occured? :(");
-        }
-    })
-}
-
-function sendTextMessage(sender, text) {
-    messageData = {
-        text:text
-    }
-    request({
-        url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: { access_token: config.token },
-        method: 'POST',
-        json: {
-            recipient: {id:sender},
-            message: messageData,
-        }
-    }, function(error, response, body) {
-        if (error) {
-            console.log('Error sending message: ', error);
-        } else if (response.body.error) {
-            console.log('Error: ', response.body.error);
+            utils.sendTextMessage(doc.user_id, "An error occured? :(");
         }
     });
 }
@@ -217,14 +169,14 @@ function processText(sender, text) {
                                 };
                                 var gnr = new Questions(sample_data);
                                 gnr.save();
-                                sendTextMessage(doc.user_id, "Cool, what Local Government in "+ text +" are you shipping from ?");
+                                utils.sendTextMessage(doc.user_id, "Cool, what Local Government in "+ text +" are you shipping from ?");
                             }
                         });
                         break;
                     }
                 }
                 if(!found) {
-                    sendTextMessage(doc.user_id, "Sorry, we don't ship from "+text);
+                    utils.sendTextMessage(doc.user_id, "Sorry, we don't ship from "+text);
                 }
 
                 break;
@@ -261,7 +213,7 @@ function processText(sender, text) {
                                                 };
                                                 var gnr = new Questions(sample_data);
                                                 gnr.save();
-                                                sendTextMessage(sender, "Nice, what state are you shipping to? ");
+                                                utils.sendTextMessage(sender, "Nice, what state are you shipping to? ");
                                             }
                                         });
                                         break dance;
@@ -271,7 +223,7 @@ function processText(sender, text) {
                         }
                     }
                     if(!found_lga) {
-                        sendTextMessage(sender, "Sorry, the LGA "+text+" cannot be found in "+state+" state");
+                        utils.sendTextMessage(sender, "Sorry, the LGA "+text+" cannot be found in "+state+" state");
                     }
                 });
                 break;
@@ -292,14 +244,14 @@ function processText(sender, text) {
                                 };
                                 var gnr = new Questions(sample_data);
                                 gnr.save();
-                                sendTextMessage(doc.user_id, "Cool, what Local Government in "+ text +" are you shipping to ?");
+                                utils.sendTextMessage(doc.user_id, "Cool, what Local Government in "+ text +" are you shipping to ?");
                             }
                         });
                         break;
                     }
                 }
                 if(!found) {
-                    sendTextMessage(doc.user_id, "Sorry, we don't ship to "+text);
+                    utils.sendTextMessage(doc.user_id, "Sorry, we don't ship to "+text);
                 }
 
                 break;
@@ -332,7 +284,7 @@ function processText(sender, text) {
                                                     };
                                                     var gnr = new Questions(sample_data);
                                                     gnr.save();
-                                                    sendTextMessage(sender, "You are doing great! Can I know the weight (in KG) of the item you intend to ship");
+                                                    utils.sendTextMessage(sender, "You are doing great! Can I know the weight (in KG) of the item you intend to ship");
                                                 }
                                             });
                                             break dance;
@@ -342,7 +294,7 @@ function processText(sender, text) {
                             }
                         }
                     if(!found_lga) {
-                        sendTextMessage(sender, "Sorry, the LGA "+text+" cannot be found in "+state+" state");
+                        utils.sendTextMessage(sender, "Sorry, the LGA "+text+" cannot be found in "+state+" state");
                     }
                 });
                 break;
@@ -350,7 +302,7 @@ function processText(sender, text) {
                 //check if weight is a valid float
                 var weight = parseFloat(text);
                 if(isNaN(text)) {
-                    sendTextMessage(doc.user_id, "Please enter a valid weight");
+                    utils.sendTextMessage(doc.user_id, "Please enter a valid weight");
                     return;
                 }
                 //check that we have all info to fetch shipping fee,
@@ -399,7 +351,7 @@ function processText(sender, text) {
                                                lga_to = doc[0].response_id;
                                                lga_2_text = doc[0].response;
 
-                                               sendTextMessage(sender,"Just a minute...");
+                                               utils.sendTextMessage(sender,"Just a minute...");
 
                                                request({
                                                    url: 'http://api.mercury.ng/v3/shipping-prices',
@@ -415,14 +367,14 @@ function processText(sender, text) {
                                                        console.log('Error: ', response.body.error);
                                                    }
                                                    else if(body.data) {
-                                                       sendTextMessage(sender,"The shipping price for an item of "+weight+"(kg) between "+state_text+"("+lga_text+") and "+state_2_text+"("+lga_2_text+")"+"is =N="+body.data);
+                                                       utils.sendTextMessage(sender,"The shipping price for an item of "+weight+"(kg) between "+state_text+"("+lga_text+") and "+state_2_text+"("+lga_2_text+")"+"is =N="+body.data);
                                                    }
                                                    else if(body.message == "No price bound found"){
-                                                       sendTextMessage(sender, "Sorry, We currently don't ship items of "+weight+"(kg) between "+lga_text+"("+state_text+") and "+lga_2_text+"("+state_2_text+")");
+                                                       utils.sendTextMessage(sender, "Sorry, We currently don't ship items of "+weight+"(kg) between "+lga_text+"("+state_text+") and "+lga_2_text+"("+state_2_text+")");
 
                                                    }
                                                    else if(body.message == "No zone mapping found for this LGA"){
-                                                       sendTextMessage(sender, "Sorry, We currently don't ship  between "+lga_text+"("+state_text+") and "+lga_2_text+"("+state_2_text+")");
+                                                       utils.sendTextMessage(sender, "Sorry, We currently don't ship  between "+lga_text+"("+state_text+") and "+lga_2_text+"("+state_2_text+")");
                                                    }
                                                });
                                            }
@@ -440,7 +392,7 @@ function processText(sender, text) {
                 break;
 
             default:
-                sendTextMessage(doc.user_id, "An error occured? :(");
+                utils.sendTextMessage(doc.user_id, "An error occured? :(");
         }
     });
 
