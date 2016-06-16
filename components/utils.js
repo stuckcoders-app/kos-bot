@@ -6,7 +6,7 @@ const config = require('../config/config');
 let utils = {
 	
 	sendTextMessage: (sender, text) => {
-		messageData = {
+		let messageData = {
 			text:text
 		}
 		request({
@@ -27,7 +27,7 @@ let utils = {
 	},
 	
 	sendGenericMessage: (sender,text,data) => {
-		messageData = {
+		let messageData = {
 			"attachment": {
 			"type": "template",
 			"payload": {
@@ -42,14 +42,14 @@ let utils = {
 			qs: { access_token: config.token },
 			method: 'POST',
 			json: {
-			recipient: {id:sender},
-			message: messageData,
+				recipient: { id: sender },
+				message: messageData,
 			}
 		}, function(error, response, body) {
 			if (error) {
-			console.log('Error sending message: ', error);
+				console.log('Error sending message: ', error);
 			} else if (response.body.error) {
-			console.log('Error: ', response.body.error);
+				console.log('Error: ', response.body.error);
 			}
 		});
 	}
