@@ -1,11 +1,12 @@
 /**
  * Created by oluwatobi.okusanya on 14/04/16.
  */
-var assert = require('assert');
-var mongoose = require('mongoose');
+"use strict";
+
+const mongoose = require('mongoose');
 
 // Document schema in MongoDB
-var QuestionSchema = new mongoose.Schema({
+let QuestionSchema = new mongoose.Schema({
     user_id: Number,
     question_type: String,
     response: String,
@@ -13,7 +14,6 @@ var QuestionSchema = new mongoose.Schema({
     timestamp: Object
 });
 
-
-var Questions = mongoose.model('questions', QuestionSchema);
+let Questions = mongoose.model('questions', QuestionSchema);
 
 module.exports = Questions;
